@@ -1,0 +1,88 @@
+//HWDRV232
+#include <REG52.H>
+
+#define uchar unsigned char
+#define uint unsigned int
+
+#define cRECBUFSIZE 16
+#define cSNDBUFSIZE 16
+#define cSDELAY      5
+
+uchar xdata MCOM_READBUF[cRECBUFSIZE];
+uchar xdata MCOM_SENDBUF[cSNDBUFSIZE];
+
+bit MCOM_RIBUF;
+uchar data MCOM_RW_IX;
+uchar data MCOM_RR_IX;
+uchar data MCOM_SW_IX;
+uchar data MCOM_SR_IX;
+uchar data MCOM_RBIB;
+uchar data MCOM_SBIB;
+uchar data MCOM_SDELAY;
+uchar data MCOM_RByte;
+
+
+// Vyzvednuti znaku z recbuf
+void MCOM_PROC()
+{ if(MCOM_RBIB > 0)       // Pokud je v rbuf znak
+  { MCOM_RIBUF=1;         // Nastav priznak
+    if(MCOM_RR_IX >= cRECBUFSIZE) MCOM_RR_IX=0;  // Pripadne vrat index
+    MCOM_RByte=MCOM_READBUF[MCOM_RR_IX];        // Nacti znak z rbuf
+    MCOM_RR_IX++;                               // Posun index
+    MCOM_RBIB--;                                // Sniz pocet znaku v rbuf
+  } else MCOM_RIBUF=0;             // Jinak nuluj priznak znaku v rbuf
+
+  if(MCOM_SBIB > 0)
+  { MCOM_SDELAY--;
+    if(!MCOM_SDELAY)
+    { if(MCOM_SR_IX >= cSNDBUFSIZE) MCOM_SR_IX=0;  // Pripadne vrat index
+      SBUF=MCOM_READBUF[MCOM_SR_IX];              // Odesli znak z sndbuf
+      MCOM_SDELAY=cSDELAY;
+      MCOM_SR_IX++;                               // Posun index
+      MCOM_SBIB--;                                // Sniz pocet znaku v sndbuf
+    }
+  }
+}
+
+// Zapis znaku do vysilaci fronty
+bit MCOM_SendChar(uchar Ch)
+{ if(MCOM_SW_IX >= cSNDBUFSIZE) MCOM_SW_IX=0;  // Pripadne vrat index
+  if(MCOM_SBIB < (cSNDBUFSIZE-1))
+  { MCOM_READBUF[MCOM_SW_IX]=Ch;                // Zapis znak do sndbuf
+    MCOM_SW_IX++;                               // Posun index
+    MCOM_SBIB++;                                // Zvys pocet znaku v sndbuf
+    return(1);
+  } else return(0);
+}
+
+
+// Zapis prichoziho znaku do recbuf
+void SerialInterrupt() interrupt 4 using 1
+{ if(RI)
+  { if(MCOM_RBIB < cRECBUFSIZE)                    // Pokud neni rbuf plny
+    { if(MCOM_RW_IX >= cRECBUFSIZE) MCOM_RW_IX=0;  // Pripadne vrat index
+      MCOM_READBUF[MCOM_RW_IX]=SBUF;              // Nacti znak z 232
+      MCOM_RW_IX++;                               // Posun index
+      MCOM_RBIB++;                                // Zvys pocet znaku v rbuf
+    }
+  }
+}
+
+
+void InitHWSerDrv()
+{ uchar i;
+
+  RI=0;
+  TI=0;
+  MCOM_RIBUF=0;
+  MCOM_RW_IX=0;
+  MCOM_RR_IX=0;
+  MCOM_SW_IX=0;
+  MCOM_SR_IX=0;
+  MCOM_RBIB=0;
+  MCOM_SBIB=0;
+  MCOM_RByte=0;
+  MCOM_SDELAY=cSDELAY;
+  for(i=0; i<sizeof(MCOM_READBUF); i++) MCOM_READBUF[i]=0;
+  for(i=0; i<sizeof(MCOM_SENDBUF); i++) MCOM_SENDBUF[i]=0;
+}

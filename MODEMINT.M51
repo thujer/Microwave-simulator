@@ -1,0 +1,445 @@
+L51 LINKER/LOCATOR V3.11                                                                  23/12/04  18:08:29  PAGE 1
+
+
+MS-DOS L51 LINKER/LOCATOR V3.11, INVOKED BY:
+D:\PRGJAZ\CPU51\C51_V401\BIN\L51.EXE MCOM_DRV.OBJ, DST_TMR.OBJ, SPEAKER.OBJ TO MODEMINT.OMF RAMSIZE (256) XDATA (0H)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  MCOM_DRV.OBJ (DRV232)
+  DST_TMR.OBJ (DST_TMR)
+  SPEAKER.OBJ (SPEAKER)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_STARTUP)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_LADD)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_ULCMP)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_LLDXDATA)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_LSTXDATA)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_LSTKXDATA)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_ISTACK)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_LACC)
+  D:\PRGJAZ\CPU51\C51_V401\LIB\C51S.LIB (?C_ISTACKD)
+
+
+LINK MAP OF MODULE:  MODEMINT.OMF (DRV232)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0006H     UNIT         DRV232_DVAR
+            DATA    000EH     0001H     UNIT         ?DT?SPEAKER
+            DATA    000FH     0005H     UNIT         ?C_LIB_DATA
+            DATA    0014H     0001H     UNIT         _DATA_GROUP_
+            IDATA   0015H     0007H     UNIT         ?ID?DST_TMR
+                    001CH     0004H                  *** GAP ***
+            BIT     0020H.0   0000H.5   UNIT         DRV232_BIT
+            BIT     0020H.5   0001H.3   UNIT         ?BI?DST_TMR
+            IDATA   0022H     0001H     UNIT         ?STACK
+
+            * * * * * * *  X D A T A   M E M O R Y  * * * * * * *
+            XDATA   0000H     0040H     PAGE         READBUF_XDATA
+            XDATA   0040H     00B0H     UNIT         ?XD?SPEAKER
+                    00F0H     0010H                  *** GAP ***
+            XDATA   0100H     0040H     PAGE         SENDBUF_XDATA
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     000DH     UNIT         ?PR?RESETPROMN?SPEAKER
+            CODE    0010H     000CH     UNIT         ?C_C51STARTUP
+                    001CH     0007H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+                    0026H     0005H                  *** GAP ***
+            CODE    002BH     0003H     ABSOLUTE     
+            CODE    002EH     0203H     UNIT         DRV232_CODE
+            CODE    0231H     0061H     UNIT         ?PR?_TMR_PROCESSING?DST_TMR
+            CODE    0292H     003DH     UNIT         ?PR?INT_CT2?SPEAKER
+            CODE    02CFH     0038H     UNIT         ?PR?INIT?SPEAKER
+            CODE    0307H     0076H     UNIT         ?PR?TIMEOUT_PROC?SPEAKER
+            CODE    037DH     00DBH     UNIT         ?PR?MAIN?SPEAKER
+            CODE    0458H     002DH     UNIT         ?CO?SPEAKER
+            CODE    0485H     00C0H     UNIT         ?C_LIB_CODE
+
+
+
+OVERLAY MAP OF MODULE:   MODEMINT.OMF (DRV232)
+L51 LINKER/LOCATOR V3.11                                                                23/12/04  18:08:29  PAGE 2
+
+
+
+
+SEGMENT                               DATA_GROUP 
+  +--> CALLED SEGMENT               START    LENGTH
+---------------------------------------------------
+?C_C51STARTUP                       -----    -----
+  +--> ?PR?MAIN?SPEAKER
+
+?PR?MAIN?SPEAKER                    -----    -----
+  +--> ?PR?INIT?SPEAKER
+  +--> ?PR?RESETPROMN?SPEAKER
+  +--> ?PR?_TMR_PROCESSING?DST_TMR
+  +--> ?CO?SPEAKER
+  +--> ?PR?TIMEOUT_PROC?SPEAKER
+
+?PR?TIMEOUT_PROC?SPEAKER            0014H    0001H
+  +--> ?C_LIB_CODE
+
+
+
+SYMBOL TABLE OF MODULE:  MODEMINT.OMF (DRV232)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        DRV232
+  D:00E0H         SYMBOL        ACC
+  D:0007H         SYMBOL        AR7
+  C:0137H         SYMBOL        CONV_SEND
+  B:0020H.4       SYMBOL        CY_SAVE
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  B:0020H.0       SEGMENT       DRV232_BIT
+  C:002EH         SEGMENT       DRV232_CODE
+  D:0008H         SEGMENT       DRV232_DVAR
+  B:00A8H.4       SYMBOL        ES
+  C:00BDH         SYMBOL        EXIT_RB
+  C:010FH         SYMBOL        EXIT_SS
+  C:005CH         SYMBOL        EXIT_STB
+  C:012EH         SYMBOL        EXIT_SXS
+  C:002EH         SYMBOL        INTR_SBUFTOBUF
+  C:01F2H         PUBLIC        MCOM_FREE_REC_BUF
+  C:020BH         PUBLIC        MCOM_FREE_SND_BUF
+  C:0065H         PUBLIC        MCOM_PROC
+  X:0000H         SYMBOL        MCOM_READBUF
+  C:00A6H         PUBLIC        MCOM_READBYTE
+  C:0213H         PUBLIC        MCOM_RESET_BUFFERS
+  C:01E7H         PUBLIC        MCOM_RESET_REC_BUF
+  C:01FAH         PUBLIC        MCOM_RESET_SND_BUF
+  B:0020H.2       PUBLIC        MCOM_RFLOW_ERR
+  B:0020H.0       PUBLIC        MCOM_RIBUF
+  D:0008H         SYMBOL        MCOM_RR_BEG_BUF
+  D:0009H         SYMBOL        MCOM_RW_END_BUF
+  X:0100H         SYMBOL        MCOM_SENDBUF
+  D:000CH         PUBLIC        MCOM_SEND_DELAY_VALUE
+  B:0020H.3       PUBLIC        MCOM_SFULL_BUF
+  D:000AH         SYMBOL        MCOM_SR_BEG_BUF
+  D:000BH         SYMBOL        MCOM_SW_END_BUF
+  B:0020H.1       PUBLIC        MCOM_TIBUF
+  C:007DH         SYMBOL        MP_CT
+  C:009FH         SYMBOL        MP_EXIT
+  C:00A5H         SYMBOL        MP_EXIT2
+  C:0072H         SYMBOL        MP_TEST_RIBUF_EXIT
+  C:0074H         SYMBOL        MP_TEST_TIBUF
+  C:0057H         SYMBOL        NO_FLOW_ERROR
+L51 LINKER/LOCATOR V3.11                                                                23/12/04  18:08:29  PAGE 3
+
+
+  C:0221H         SYMBOL        NUM_CHAR
+  X:0000H         SEGMENT       READBUF_XDATA
+  N:0040H         SYMBOL        RECBUFSIZE
+  B:0098H.0       SYMBOL        RI
+  D:0099H         SYMBOL        SBUF
+  C:003FH         SYMBOL        SB_RECEIVEBYTE
+  C:005AH         SYMBOL        SB_SENDBYTE
+  C:00EEH         SYMBOL        SCH_BUFFER_FULL
+  C:00E1H         SYMBOL        SCH_BUFFER_OK
+  X:0100H         SEGMENT       SENDBUF_XDATA
+  N:0040H         SYMBOL        SNDBUFSIZE
+  D:000DH         SYMBOL        SP_DELAY_CT
+  C:0103H         SYMBOL        SS_LOOP
+  C:0124H         SYMBOL        SXS_LOOP
+  B:0098H.1       SYMBOL        TI
+  C:021AH         PUBLIC        _MCOM_DELAY
+  C:013EH         PUBLIC        _MCOM_SEND_BYTE
+  C:00C8H         PUBLIC        _MCOM_SEND_CHAR
+  C:015BH         PUBLIC        _MCOM_SEND_INT
+  C:018EH         PUBLIC        _MCOM_SEND_LONG
+  C:00F7H         PUBLIC        _MCOM_SEND_STRING
+  C:0118H         PUBLIC        _MCOM_SEND_XDATA_STRING
+  -------         ENDMOD        DRV232
+
+  -------         MODULE        DST_TMR
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  I:0015H         PUBLIC        TMR_MAXSP
+  B:0020H.5       PUBLIC        TMR_ST1S
+  B:0020H.6       PUBLIC        TMR_100MS
+  B:0020H.7       PUBLIC        RTIME_1S
+  I:0016H         PUBLIC        RTIME_MINTIMER
+  B:0021H.0       PUBLIC        TMR_ST10MS
+  B:0021H.1       PUBLIC        TMR_1MS
+  B:0021H.2       PUBLIC        TMR_1S
+  I:0017H         PUBLIC        TMR_OBSAHSP
+  I:0018H         PUBLIC        TMR_TIMER0
+  I:0019H         PUBLIC        TMR_TIMER1
+  I:001AH         PUBLIC        TMR_TIMER2
+  B:0021H.3       PUBLIC        TMR_ST100MS
+  B:0021H.4       PUBLIC        RTIME_ST1S
+  B:0021H.5       PUBLIC        TMR_10MS
+  C:0231H         PUBLIC        _TMR_PROCESSING
+  B:0021H.6       PUBLIC        RTIME_1MIN
+  I:001BH         PUBLIC        TMR_CORIDOR
+  B:0021H.7       PUBLIC        TMR_ST1MS
+  -------         PROC          _TMR_PROCESSING
+  D:0007H         SYMBOL        CORIDOR
+  -------         ENDPROC       _TMR_PROCESSING
+  C:0231H         LINE#         36
+  C:0231H         LINE#         37
+  C:0231H         LINE#         38
+  C:0238H         LINE#         39
+  C:023FH         LINE#         40
+  C:0246H         LINE#         41
+  C:024DH         LINE#         42
+  C:0254H         LINE#         43
+  C:0259H         LINE#         45
+  C:025EH         LINE#         47
+  C:0261H         LINE#         48
+  C:0263H         LINE#         49
+  C:0271H         LINE#         50
+  C:0271H         LINE#         52
+  C:0276H         LINE#         53
+  C:027BH         LINE#         55
+  C:027EH         LINE#         56
+L51 LINKER/LOCATOR V3.11                                                                23/12/04  18:08:29  PAGE 4
+
+
+  C:0282H         LINE#         57
+  C:0284H         LINE#         58
+  C:028BH         LINE#         59
+  C:028BH         LINE#         60
+  C:028FH         LINE#         61
+  C:0291H         LINE#         62
+  C:0291H         LINE#         63
+  C:0291H         LINE#         64
+  -------         ENDMOD        DST_TMR
+
+  -------         MODULE        SPEAKER
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  B:0090H.7       PUBLIC        M_S
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  B:00B0H.4       PUBLIC        T0
+  B:00D0H.6       PUBLIC        AC
+  B:00B0H.5       PUBLIC        T1
+  B:0090H.0       PUBLIC        T2
+  B:00A8H.7       PUBLIC        EA
+  D:00A8H         PUBLIC        IE
+  X:0040H         SYMBOL        LOOPSPEED
+  B:00C8H.5       PUBLIC        T2IE
+  C:0003H         SYMBOL        RESETPROMN
+  C:02CFH         SYMBOL        INIT
+  B:00B0H.7       PUBLIC        RD
+  B:0090H.3       PUBLIC        SWTCHDEBUG
+  B:00A8H.4       PUBLIC        ES
+  B:0098H.0       PUBLIC        RI
+  B:00B0H.2       PUBLIC        INT0
+  B:00D0H.7       PUBLIC        CY
+  B:00C8H.3       PUBLIC        BGEN
+  B:0098H.1       PUBLIC        TI
+  B:00B0H.3       PUBLIC        INT1
+  B:00C8H.6       PUBLIC        T2IP
+  D:00CBH         PUBLIC        RCAP2H
+  B:00B8H.4       PUBLIC        PS
+  D:0081H         PUBLIC        SP
+  B:0090H.1       PUBLIC        T2EX
+  B:00D0H.2       PUBLIC        OV
+  D:00CAH         PUBLIC        RCAP2L
+  C:037DH         PUBLIC        MAIN
+  B:0090H.0       PUBLIC        SWTCHAUTOCREDIT
+  B:00C8H.1       PUBLIC        C_T2
+  B:00B0H.6       PUBLIC        WR
+  D:0087H         PUBLIC        PCON
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  C:0292H         PUBLIC        INT_CT2
+  X:0044H         SYMBOL        MINLOOPSPEED
+  X:0048H         SYMBOL        MAXLOOPSPEED
+  B:0088H.1       PUBLIC        IE0
+  B:0088H.3       PUBLIC        IE1
+  B:00C8H.0       PUBLIC        CP_RL2
+  X:004CH         SYMBOL        TEXTBUF
+  B:0090H.2       PUBLIC        SWTCHDEBUG2
+  B:00A8H.1       PUBLIC        ET0
+  B:00A8H.3       PUBLIC        ET1
+  B:0088H.5       PUBLIC        TF0
+  B:00A8H.5       PUBLIC        ET2
+  B:0088H.7       PUBLIC        TF1
+  B:00C8H.7       PUBLIC        TF2
+  B:0098H.2       PUBLIC        RB8
+  B:00A8H.0       PUBLIC        EX0
+L51 LINKER/LOCATOR V3.11                                                                23/12/04  18:08:29  PAGE 5
+
+
+  B:0088H.0       PUBLIC        IT0
+  D:008DH         PUBLIC        TH1
+  B:0098H.3       PUBLIC        TB8
+  B:00A8H.2       PUBLIC        EX1
+  B:0088H.2       PUBLIC        IT1
+  B:00D0H.0       PUBLIC        P
+  B:0080H.1       PUBLIC        PINLED1
+  B:0098H.7       PUBLIC        SM0
+  B:0080H.2       PUBLIC        PINLED2
+  B:0098H.6       PUBLIC        SM1
+  D:008BH         PUBLIC        TL1
+  B:0080H.3       PUBLIC        PINLED3
+  B:0098H.5       PUBLIC        SM2
+  B:0080H.4       PUBLIC        PINLED4
+  B:0080H.5       PUBLIC        PINLED5
+  B:00B8H.1       PUBLIC        PT0
+  B:00B8H.3       PUBLIC        PT1
+  B:00D0H.3       PUBLIC        RS0
+  B:00B8H.5       PUBLIC        PT2
+  B:0088H.4       PUBLIC        TR0
+  B:00D0H.4       PUBLIC        RS1
+  B:0088H.6       PUBLIC        TR1
+  B:0090H.5       PUBLIC        SDA
+  B:00C8H.2       PUBLIC        TR2
+  B:00B8H.0       PUBLIC        PX0
+  B:00B8H.2       PUBLIC        PX1
+  B:00A0H.7       PUBLIC        IGN
+  C:0307H         SYMBOL        TIMEOUT_PROC
+  B:0090H.4       PUBLIC        SCL
+  B:0090H.6       PUBLIC        WDI
+  B:0098H.4       PUBLIC        REN
+  D:00C8H         PUBLIC        T2CON
+  D:000EH         SYMBOL        RBYTE
+  X:00ECH         SYMBOL        CTLOOPSPEED
+  B:0090H.1       PUBLIC        SWTCHFIXADR
+  B:00B0H.0       PUBLIC        RXD
+  B:00B0H.1       PUBLIC        TXD
+  B:00C8H.4       PUBLIC        T2RSE
+  B:00D0H.5       PUBLIC        F0
+  -------         PROC          INT_CT2
+  -------         ENDPROC       INT_CT2
+  C:0292H         LINE#         68
+  C:0297H         LINE#         69
+  C:029BH         LINE#         70
+  C:029DH         LINE#         71
+  C:02A5H         LINE#         73
+  C:02ABH         LINE#         74
+  C:02B3H         LINE#         76
+  C:02B9H         LINE#         77
+  C:02C7H         LINE#         78
+  C:02C7H         LINE#         79
+  C:02C7H         LINE#         80
+  C:02C9H         LINE#         81
+  -------         PROC          INIT
+  -------         ENDPROC       INIT
+  C:02CFH         LINE#         89
+  C:02CFH         LINE#         90
+  C:02CFH         LINE#         91
+  C:02D2H         LINE#         92
+  C:02D4H         LINE#         93
+  C:02D6H         LINE#         94
+  C:02D9H         LINE#         95
+  C:02DCH         LINE#         96
+  C:02DEH         LINE#         97
+  C:02E1H         LINE#         98
+L51 LINKER/LOCATOR V3.11                                                                23/12/04  18:08:29  PAGE 6
+
+
+  C:02E4H         LINE#         99
+  C:02E6H         LINE#         100
+  C:02E8H         LINE#         101
+  C:02EAH         LINE#         102
+  C:02ECH         LINE#         103
+  C:02EEH         LINE#         104
+  C:02F0H         LINE#         105
+  C:02F2H         LINE#         106
+  C:02F4H         LINE#         107
+  C:02F6H         LINE#         109
+  C:02F8H         LINE#         110
+  C:02FBH         LINE#         111
+  C:02FEH         LINE#         112
+  C:0300H         LINE#         113
+  C:0302H         LINE#         115
+  C:0304H         LINE#         116
+  C:0306H         LINE#         118
+  -------         PROC          TIMEOUT_PROC
+  D:0014H         SYMBOL        I
+  -------         ENDPROC       TIMEOUT_PROC
+  C:0307H         LINE#         128
+  C:0307H         LINE#         129
+  C:0307H         LINE#         132
+  C:0321H         LINE#         134
+  C:0324H         LINE#         135
+  C:0324H         LINE#         136
+  C:033AH         LINE#         137
+  C:035AH         LINE#         138
+  C:037CH         LINE#         139
+  C:037CH         LINE#         140
+  -------         PROC          RESETPROMN
+  D:0000H         SYMBOL        I
+  -------         ENDPROC       RESETPROMN
+  C:0003H         LINE#         146
+  C:0003H         LINE#         147
+  C:0003H         LINE#         149
+  C:000FH         LINE#         150
+  -------         PROC          MAIN
+  -------         ENDPROC       MAIN
+  C:037DH         LINE#         158
+  C:037DH         LINE#         159
+  C:0380H         LINE#         160
+  C:0383H         LINE#         161
+  C:0386H         LINE#         163
+  C:0386H         LINE#         164
+  C:038BH         LINE#         165
+  C:0391H         LINE#         166
+  C:0396H         LINE#         168
+  C:03C7H         LINE#         169
+  C:03D0H         LINE#         170
+  C:03DEH         LINE#         171
+  C:03ECH         LINE#         172
+  C:03FAH         LINE#         173
+  C:0408H         LINE#         174
+  C:0416H         LINE#         175
+  C:0424H         LINE#         176
+  C:0432H         LINE#         177
+  C:0440H         LINE#         178
+  C:044CH         LINE#         179
+  C:044CH         LINE#         180
+  C:044CH         LINE#         182
+  C:044FH         LINE#         183
+  C:0452H         LINE#         184
+  C:0454H         LINE#         185
+  C:0457H         LINE#         186
+L51 LINKER/LOCATOR V3.11                                                                23/12/04  18:08:29  PAGE 7
+
+
+  -------         ENDMOD        SPEAKER
+
+  -------         MODULE        ?C_LADD
+  C:0485H         PUBLIC        ?C_LADD
+  -------         ENDMOD        ?C_LADD
+
+  -------         MODULE        ?C_ULCMP
+  C:0498H         PUBLIC        ?C_ULCMP
+  -------         ENDMOD        ?C_ULCMP
+
+  -------         MODULE        ?C_LLDXDATA
+  C:04BDH         PUBLIC        ?C_LLDXDATA
+  -------         ENDMOD        ?C_LLDXDATA
+
+  -------         MODULE        ?C_LSTXDATA
+  C:04C9H         PUBLIC        ?C_LSTXDATA
+  -------         ENDMOD        ?C_LSTXDATA
+
+  -------         MODULE        ?C_LSTKXDATA
+  C:04D5H         PUBLIC        ?C_LSTKXDATA
+  -------         ENDMOD        ?C_LSTKXDATA
+
+  -------         MODULE        ?C_ISTACK
+  C:0506H         PUBLIC        ?C_LPUSH
+  C:0525H         PUBLIC        ?C_LPULL
+  C:052DH         PUBLIC        ?C_LSTKDEC
+  -------         ENDMOD        ?C_ISTACK
+
+  -------         MODULE        ?C_ISTACKD
+  D:0013H         PUBLIC        ?C_DSTKLEVEL
+  -------         ENDMOD        ?C_ISTACKD
+
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

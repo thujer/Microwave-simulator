@@ -1,0 +1,1944 @@
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 1   
+
+
+DOS C51 COMPILER V4.01, COMPILATION OF MODULE SPEAKER
+OBJECT MODULE PLACED IN SPEAKER.OBJ
+COMPILER INVOKED BY: D:\PRGJAZ\CPU51\C51_V401\BIN\C51.EXE SPEAKER.C51 DEBUG CODE LISTINCLUDE
+
+stmt level    source
+
+   1          /*=========================================================================*/
+   2          #define SWName               "GSM Interpreter"
+   3          #define SWVersion                "2.15"
+   4          #define SWLastCompile         "16/03/2004"
+   5          #define SWLocation             "Radesov"
+   6          #define defSMS_Header           "RG-GSM"
+   7          /*=========================================================================*/
+   8          #include <REG52.H>
+   1      =1  /* (c) Copyright KEIL ELEKTRONIK GmbH.  1990, All rights reserved. */
+   2      =1  /* 8052 Processor Declarations */
+   3      =1  
+   4      =1  /*  BYTE Registers  */
+   5      =1  sfr P0    = 0x80;
+   6      =1  sfr P1    = 0x90;
+   7      =1  sfr P2    = 0xA0;
+   8      =1  sfr P3    = 0xB0;
+   9      =1  sfr PSW   = 0xD0;
+  10      =1  sfr ACC   = 0xE0;
+  11      =1  sfr B     = 0xF0;
+  12      =1  sfr SP    = 0x81;
+  13      =1  sfr DPL   = 0x82;
+  14      =1  sfr DPH   = 0x83;
+  15      =1  sfr PCON  = 0x87;
+  16      =1  sfr TCON  = 0x88;
+  17      =1  sfr TMOD  = 0x89;
+  18      =1  sfr TL0   = 0x8A;
+  19      =1  sfr TL1   = 0x8B;
+  20      =1  sfr TH0   = 0x8C;
+  21      =1  sfr TH1   = 0x8D;
+  22      =1  sfr IE    = 0xA8;
+  23      =1  sfr IP    = 0xB8;
+  24      =1  sfr SCON  = 0x98;
+  25      =1  sfr SBUF  = 0x99;
+  26      =1  
+  27      =1  /*  8052 Extensions  */
+  28      =1  sfr T2CON = 0xC8;
+  29      =1  sfr RCAP2L = 0xCA;
+  30      =1  sfr RCAP2H = 0xCB;
+  31      =1  sfr TL2   = 0xCC;
+  32      =1  sfr TH2   = 0xCD;
+  33      =1  
+  34      =1  
+  35      =1  /*  BIT Registers  */
+  36      =1  /*  PSW  */
+  37      =1  sbit CY    = 0xD7;
+  38      =1  sbit AC    = 0xD6;
+  39      =1  sbit F0    = 0xD5;
+  40      =1  sbit RS1   = 0xD4;
+  41      =1  sbit RS0   = 0xD3;
+  42      =1  sbit OV    = 0xD2;
+  43      =1  sbit P     = 0xD0;
+  44      =1  
+  45      =1  /*  TCON  */
+  46      =1  sbit TF1   = 0x8F;
+  47      =1  sbit TR1   = 0x8E;
+  48      =1  sbit TF0   = 0x8D;
+  49      =1  sbit TR0   = 0x8C;
+  50      =1  sbit IE1   = 0x8B;
+  51      =1  sbit IT1   = 0x8A;
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 2   
+
+  52      =1  sbit IE0   = 0x89;
+  53      =1  sbit IT0   = 0x88;
+  54      =1  
+  55      =1  /*  IE  */
+  56      =1  sbit EA    = 0xAF;
+  57      =1  sbit ES    = 0xAC;
+  58      =1  sbit ET1   = 0xAB;
+  59      =1  sbit EX1   = 0xAA;
+  60      =1  sbit ET0   = 0xA9;
+  61      =1  sbit EX0   = 0xA8;
+  62      =1  
+  63      =1  /*  IP  */
+  64      =1  sbit PS    = 0xBC;
+  65      =1  sbit PT1   = 0xBB;
+  66      =1  sbit PX1   = 0xBA;
+  67      =1  sbit PT0   = 0xB9;
+  68      =1  sbit PX0   = 0xB8;
+  69      =1  
+  70      =1  /*  P3  */
+  71      =1  sbit RD    = 0xB7;
+  72      =1  sbit WR    = 0xB6;
+  73      =1  sbit T1    = 0xB5;
+  74      =1  sbit T0    = 0xB4;
+  75      =1  sbit INT1  = 0xB3;
+  76      =1  sbit INT0  = 0xB2;
+  77      =1  sbit TXD   = 0xB1;
+  78      =1  sbit RXD   = 0xB0;
+  79      =1  
+  80      =1  /*  SCON  */
+  81      =1  sbit SM0   = 0x9F;
+  82      =1  sbit SM1   = 0x9E;
+  83      =1  sbit SM2   = 0x9D;
+  84      =1  sbit REN   = 0x9C;
+  85      =1  sbit TB8   = 0x9B;
+  86      =1  sbit RB8   = 0x9A;
+  87      =1  sbit TI    = 0x99;
+  88      =1  sbit RI    = 0x98;
+  89      =1  
+  90      =1  /*  8052 Extensions  */
+  91      =1  /*  IE  */
+  92      =1  sbit ET2   = 0xAD;
+  93      =1  
+  94      =1  /*  IP  */
+  95      =1  sbit PT2   = 0xBD;
+  96      =1  
+  97      =1  /*  P1  */
+  98      =1  sbit T2EX  = 0x91;
+  99      =1  sbit T2    = 0x90;
+ 100      =1               
+ 101      =1  /*  T2CON  */
+ 102      =1  sbit TF2   = 0xCF;
+ 103      =1  sbit T2IP  = 0xCE;
+ 104      =1  sbit T2IE  = 0xCD;
+ 105      =1  sbit T2RSE = 0xCC;
+ 106      =1  sbit BGEN  = 0xCB;
+ 107      =1  sbit TR2   = 0xCA;
+ 108      =1  sbit C_T2  = 0xC9;
+ 109      =1  sbit CP_RL2= 0xC8;
+ 110      =1  sfr  CKCON = 0x8F;
+   9          #include "MCOM_DRV.H"      // Driver HW komunikace  (GSM Modem/PC)
+   1      =1  extern bit  MCOM_RIBUF;
+   2      =1  extern bit  MCOM_TIBUF;
+   3      =1  
+   4      =1  extern bit  MCOM_RFLOW_ERR;
+   5      =1  extern bit  MCOM_SFLOW_ERR;
+   6      =1  
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 3   
+
+   7      =1  extern bit  MCOM_SFULL_BUF;
+   8      =1  
+   9      =1  extern char MCOM_READBYTE();
+  10      =1  extern void MCOM_PROC();
+  11      =1  
+  12      =1  extern void MCOM_SEND_CHAR         ( unsigned char );
+  13      =1  extern void MCOM_SEND_XDATA_STRING ( void *        );
+  14      =1  extern void MCOM_SEND_STRING       ( void *        );
+  15      =1  extern void MCOM_SEND_BYTE         ( unsigned char );
+  16      =1  extern void MCOM_SEND_INT          ( unsigned int  );
+  17      =1  extern void MCOM_SEND_LONG         ( unsigned long );
+  18      =1  
+  19      =1  extern void MCOM_DELAY( unsigned char );
+  20      =1  
+  21      =1  extern unsigned char MCOM_SEND_DELAY_VALUE;
+  22      =1  
+  23      =1  extern void MCOM_RESET_REC_BUF();
+  24      =1  extern void MCOM_RESET_SND_BUF();
+  25      =1  extern void MCOM_RESET_BUFFERS();
+  26      =1  extern void MCOM_FREE_REC_BUF();
+  27      =1  extern void MCOM_FREE_SND_BUF();
+  10          
+  11          /*-------------------------------------------------------------------------*/
+  12          // Zkraceni definice typu
+  13          #define uchar unsigned char
+  14          #define uint  unsigned int
+  15          #define ulong unsigned long
+  16          
+  17          uchar code Sound[]={
+  18           0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0x7C, 0x7C, 0x7C,
+  19           0x7C, 0x7C, 0x7B, 0x7A, 0x7B, 0x78, 0x76, 0x87, 0x6E, 0x72, 0x7F, 0x67, 0x97, 0x89, 0x6B, 0x57,
+  20           0x7A, 0x94, 0x8C, 0x87, 0x6C, 0x75, 0x76, 0x89, 0x82, 0x88, 0x66, 0x8A, 0x72, 0x7E, 0x7C, 0x7F,
+  21           0x72, 0x6D, 0x8C, 0x6F, 0x91, 0x7F, 0x7B, 0x92, 0x67, 0x89, 0x6D, 0x96, 0x6C, 0x88, 0x77, 0x88,
+  22           0x7A, 0x6C, 0x72, 0x87, 0x7B, 0x7A, 0x8A, 0x85, 0x80, 0x67, 0x72, 0x7E, 0x8E, 0x7A, 0x9C, 0x7E,
+  23           0x7D, 0xA8, 0x6C, 0x8B, 0xB3, 0x86, 0xA1, 0x7A, 0x89, 0x87, 0x92, 0x88, 0xBA, 0x94, 0x70, 0x90,
+  24           0x96, 0x9A, 0x8E, 0x63, 0xA7, 0x82, 0x81, 0x85, 0x9D, 0x87, 0x77, 0x6D, 0x8B, 0x8A, 0x54, 0x80,
+  25           0x7F, 0x83, 0x78, 0x82, 0x6D, 0x6C, 0x6C, 0x63, 0x8D, 0x75, 0x68, 0x5C, 0x79, 0x5F, 0x5F, 0x5D,
+  26           0x6A, 0x6D, 0x6E, 0x4F, 0x6E, 0x6E, 0x5D, 0x6E, 0x63, 0x6E, 0x6D, 0x6E, 0x66, 0x76, 0x6A, 0x77,
+  27           0x70, 0x7A, 0x80, 0x52, 0x80, 0x63, 0x7C, 0x86, 0x60, 0x92, 0x9C, 0x78, 0x6B, 0xA8, 0x8C, 0x9B,
+  28           0x9C, 0x7C, 0x8C, 0xA8, 0x74, 0xA5, 0x97, 0x8E, 0xA6, 0x86, 0x99, 0x9D, 0x80, 0x80, 0x9A, 0x8B,
+  29           0x80, 0x8E, 0x80, 0x9A, 0x7A, 0x85, 0x82, 0x7F, 0x71, 0x75, 0x81, 0x86, 0x7F, 0x64, 0x5F, 0x6C,
+  30           0x71, 0x64, 0x73, 0x74, 0x6C, 0x6D, 0x58, 0x6F, 0x72, 0x57, 0x72, 0x73, 0x60, 0x72, 0x5F, 0x6B,
+  31           0x6D, 0x6B, 0x62, 0x85, 0x6A, 0x82, 0x43, 0x67, 0x68, 0x6D, 0x81, 0x38, 0x7A, 0x4E, 0x79, 0x6B,
+  32           0x86, 0x6F, 0x6B, 0x4F, 0x74, 0xA1, 0x74, 0x77, 0x8F, 0x73, 0x66, 0x78, 0x8C, 0xCD, 0x7C, 0x6C,
+  33           0x8C, 0x99, 0x6E, 0x84, 0x8E, 0x9E, 0x99, 0x90, 0xAF, 0x78, 0x87, 0x83, 0x8B, 0xB0, 0x97, 0x89,
+  34           0xA2, 0x9C, 0x59, 0x8E, 0x7E, 0x94, 0x9A, 0x84, 0x90, 0x96, 0x7B, 0x7F, 0x82, 0x81, 0x7B, 0x78,
+  35           0x89, 0x85, 0x7E, 0x70, 0x64, 0x7D, 0x77, 0x77, 0x5B, 0x74, 0x7B, 0x57, 0x6C, 0x76, 0x62, 0x43,
+  36           0x77, 0x79, 0x6F, 0x6F, 0x39, 0x57, 0x85, 0x2A, 0x6E, 0x73, 0x68, 0x7B, 0x4E, 0x69, 0x9D, 0x5E,
+  37           0x5D, 0x7C, 0x69, 0x80, 0x8B, 0x68, 0x9F, 0x74, 0x6D, 0x91, 0x80, 0x85, 0x87, 0x7C, 0xA0, 0x9E,
+  38           0x75, 0x89, 0x8A, 0x93, 0x9E, 0x83, 0x93, 0x95, 0x9A, 0x85, 0x89, 0x93, 0x94, 0x92, 0x9A, 0x8E,
+  39           0x91, 0x7E, 0x81, 0x94, 0x9F, 0x78, 0x8F, 0x95, 0x99, 0x7B, 0x50, 0x89, 0xC2, 0x87, 0x6E, 0x72,
+  40           0x83, 0x7A, 0x90, 0x8F, 0x9F, 0x88, 0x55, 0x92, 0x99, 0x92, 0x72, 0x79, 0xA6, 0x76, 0x69, 0x84,
+  41           0xAC, 0x84, 0x73, 0x6C, 0xAC, 0x7F, 0x5C, 0x91, 0x88, 0x9D, 0x8E, 0x8D, 0x80, 0x71, 0x63, 0x78,
+  42           0x97, 0x98, 0x7A, 0x7A, 0x8B, 0x73, 0x6B, 0x67, 0x70, 0x8C, 0x81, 0x6F, 0x82, 0x76, 0x66, 0x63,
+  43           0x69, 0x6E, 0x7E, 0x72, 0x6D, 0x7E, 0x62, 0x5F, 0x68, 0x7B, 0x6E, 0x5B, 0x82, 0x6F, 0x99, 0x69,
+  44           0x6D, 0x7B, 0x8E, 0x51, 0x8A, 0x8E, 0x93, 0x6D, 0x88, 0x68, 0x8F, 0x75, 0x82, 0xA2, 0x6D, 0x7F,
+  45           0x7A, 0xB0, 0x92, 0x89, 0x72, 0x8B, 0x8F, 0x89, 0xAF, 0x87, 0xA3, 0x6D, 0x84, 0x91, 0x94, 0x80,
+  46           0x6C, 0x89, 0x93, 0x98, 0x75, 0x86, 0x78, 0x7E, 0x6D, 0x7B, 0x82, 0x81, 0x6F, 0x5F, 0x7B, 0x7A,
+  47           0x72, 0x6B, 0x85, 0x67, 0x63, 0x4D, 0x89, 0x75, 0x68, 0x57, 0x82, 0x6F, 0x72, 0x53, 0x60, 0x93,
+  48           0x1C, 0x8B, 0x53, 0xA9, 0x55, 0x9A, 0x75, 0x83, 0x77, 0x67, 0x95, 0x63, 0x9F, 0x79, 0x7C, 0x89,
+  49           0x87, 0x6C, 0x81, 0x8D, 0xA0, 0x94, 0x7E, 0x9B, 0x82, 0x7C, 0x84, 0x9F, 0x99, 0xC9, 0x8B, 0x98,
+  50           0x6F, 0x84, 0x7D, 0x98, 0xA9, 0x99, 0x8B, 0x88, 0xAF, 0x6A, 0x7A, 0x74, 0x87, 0xA2, 0x87, 0x91,
+  51           0x8C, 0x75, 0x4C, 0x82, 0x6F, 0x95, 0x7C, 0x78, 0x76, 0x6C, 0x63, 0x61, 0x77, 0x5F, 0x63, 0x68,
+  52           0x7D, 0x6E, 0x71, 0x5D, 0x67, 0x4D, 0x81, 0x62, 0x81, 0x7C, 0x4B, 0x6A, 0x68, 0x80, 0x6A, 0x7B,
+  53           0x66, 0x82, 0x6D, 0x5C, 0x90, 0x8E, 0x82, 0x53, 0x99, 0x7B, 0x8F, 0x7B, 0x88, 0x96, 0x90, 0x74,
+  54           0x95, 0x9B, 0x67, 0x86, 0x7A, 0xB6, 0x96, 0x8E, 0x78, 0xAA, 0x5C, 0x91, 0x8F, 0x92, 0x99, 0x73,
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 4   
+
+  55           0x8C, 0x70, 0xAB, 0x7A, 0xA1, 0x79, 0x8E, 0x6E, 0x7E, 0x81, 0x80, 0x84, 0x56, 0x7F, 0x76, 0x9E,
+  56           0x35, 0x60, 0x77, 0x64, 0x48, 0x48, 0x6A, 0x47, 0x6A, 0x46, 0x7E, 0x53, 0x48, 0x3E, 0x72, 0x65,
+  57           0x5C, 0x5A, 0x7E, 0x57, 0x41, 0x5B, 0x70, 0xA2, 0x5C, 0x6F, 0x67, 0x75, 0x45, 0x87, 0x85, 0x83,
+  58           0x97, 0x84, 0x84, 0x76, 0xAE, 0x68, 0xA9, 0x7E, 0xA8, 0xA1, 0x97, 0xA0, 0x87, 0x8E, 0x7C, 0xAD,
+  59           0xA7, 0xB9, 0x84, 0xB0, 0x93, 0x91, 0x8B, 0x92, 0x9E, 0x98, 0x90, 0x90, 0xA6, 0x7C, 0x87, 0x77,
+  60           0x81, 0x7D, 0x7F, 0x7E, 0xA0, 0x67, 0x67, 0x68, 0x81, 0x53, 0x68, 0x73, 0x6E, 0x7B, 0x4C, 0x31,
+  61           0x75, 0x5F, 0x5F, 0x6D, 0x4C, 0x70, 0x5B, 0x40, 0x74, 0x8C, 0x40, 0x60, 0x67, 0x63, 0x8E, 0x6B,
+  62           0x62, 0xC6, 0x5A, 0x7A, 0x72, 0x76, 0x7F, 0x7D, 0x7A, 0xA4, 0x8E, 0x65, 0x8D, 0x8B, 0xA1, 0x84,
+  63           0x96, 0x8B, 0xAB, 0x74, 0x82, 0x9A, 0xA0, 0x8A, 0x91, 0xA1, 0x93, 0x94, 0x7E, 0x91, 0xA6, 0x85,
+  64           0x8C, 0x90, 0xA5, 0x5C, 0x6A, 0x94, 0x9C, 0x88, 0x4D, 0x8C, 0x84, 0x8A, 0x77, 0x7F, 0x7B, 0x78,
+  65           0x63, 0x86, 0x92, 0x6F, 0x7D, 0x6B, 0x6C, 0x78, 0x61, 0x7B, 0x9B, 0x83, 0x77, 0x71, 0x84, 0x71,
+  66           0x87, 0x76, 0x87, 0x9B, 0xA0, 0x89, 0x6A, 0x79, 0x79, 0x80, 0x94, 0x97, 0x9A, 0x98, 0x6C, 0x85,
+  67           0x7F, 0x73, 0x72, 0x95, 0x98, 0x8E, 0x76, 0x7A, 0x85, 0x69, 0x68, 0x73, 0x9B, 0x81, 0x6D, 0x79,
+  68           0x7E, 0x64, 0x66, 0x6D, 0x78, 0x77, 0x67, 0x8B, 0x61, 0x71, 0x49, 0x6E, 0x7B, 0x9A, 0x52, 0x78,
+  69           0x71, 0x81, 0x4C, 0x8B, 0x6A, 0x8C, 0x6C, 0x7A, 0xA7, 0x5D, 0x81, 0x71, 0x95, 0x89, 0x79, 0x7B,
+  70           0x97, 0x83, 0x76, 0x92, 0x8B, 0xA1, 0x88, 0x76, 0x94, 0x88, 0x8B, 0x80, 0x93, 0x94, 0x94, 0x7B,
+  71           0x91, 0x8B, 0x87, 0x74, 0x8F, 0x7F, 0x98, 0x6A, 0x87, 0x8D, 0x70, 0x80, 0x70, 0x96, 0x74, 0x6E,
+  72           0x6A, 0x82, 0x62, 0x74, 0x7C, 0x93, 0x82, 0x7A, 0x7F, 0x83, 0x92, 0x53, 0x75, 0x7D, 0x86, 0x91,
+  73           0x81, 0x78, 0x83, 0x4A, 0x69, 0x7E, 0x8A, 0x7F, 0x69, 0x68, 0x5B, 0x69, 0x68, 0x7E, 0x7B, 0x6E,
+  74           0x62, 0x61, 0x78, 0x5A, 0x71, 0x50, 0x8A, 0x83, 0x78, 0x54, 0x72, 0x67, 0x4F, 0x6F, 0x74, 0x8E,
+  75           0x74, 0x76, 0x67, 0x6B, 0x67, 0x68, 0x84, 0x86, 0x77, 0x72, 0xA0, 0x82, 0x7F, 0x6C, 0x6F, 0x8F,
+  76           0x9C, 0x7D, 0xA2, 0x8A, 0x7D, 0x86, 0x79, 0x97, 0x90, 0x80, 0xA7, 0x98, 0x86, 0x92, 0x8C, 0x7A,
+  77           0x9C, 0x6F, 0xA8, 0x9B, 0xB4, 0x5F, 0x8C, 0x61, 0x89, 0x7D, 0x94, 0x87, 0x7F, 0x82, 0x6F, 0xA2,
+  78           0x6E, 0x85, 0x52, 0x8B, 0x5C, 0x82, 0x7B, 0x7D, 0x64, 0x6F, 0x69, 0x6E, 0x5C, 0x64, 0x7D, 0x6E,
+  79           0x71, 0x60, 0x77, 0x5D, 0x6E, 0x7B, 0x66, 0x67, 0x7A, 0x72, 0x76, 0x73, 0x52, 0x92, 0x78, 0x75,
+  80           0x81, 0x80, 0x79, 0x7E, 0x6C, 0x81, 0x92, 0x80, 0x95, 0xBE, 0x74, 0x99, 0x8E, 0x9B, 0xEB, 0x6B,
+  81           0x94, 0xB1, 0x8B, 0x98, 0xA5, 0x9C, 0xA6, 0x7C, 0x81, 0xC0, 0x90, 0x7D, 0x92, 0x75, 0x86, 0x73,
+  82           0x91, 0x86, 0x7F, 0x62, 0x69, 0x6C, 0x7B, 0x65, 0x6F, 0x56, 0x79, 0x82, 0x5E, 0x51, 0x58, 0x5E,
+  83           0x4A, 0x7E, 0x5B, 0x7E, 0x50, 0x58, 0x5C, 0x56, 0x50, 0x5C, 0x6D, 0x67, 0x68, 0x52, 0x89, 0x69,
+  84           0x60, 0x73, 0x62, 0x86, 0x78, 0x6D, 0x87, 0x87, 0x56, 0xA0, 0x76, 0x8C, 0x8B, 0x81, 0x98, 0x93,
+  85           0x9E, 0x86, 0xB2, 0x3D, 0xA8, 0x97, 0xBC, 0x99, 0xA3, 0x73, 0x9D, 0x95, 0x92, 0x9D, 0xB7, 0x80,
+  86           0x91, 0x98, 0x80, 0xB2, 0x85, 0x71, 0x7E, 0x8E, 0x7D, 0x9F, 0x82, 0x64, 0x87, 0x63, 0x82, 0x72,
+  87           0x67, 0x6A, 0x7E, 0x55, 0x81, 0x5B, 0x6A, 0x67, 0x63, 0x64, 0x60, 0x6A, 0x6D, 0x69, 0x54, 0x6E,
+  88           0x43, 0x7F, 0x6D, 0x6B, 0x6C, 0x65, 0x70, 0x6C, 0x69, 0x6C, 0x85, 0x6F, 0x91, 0x7C, 0x6E, 0x8B,
+  89           0x97, 0x84, 0x7B, 0x78, 0x8D, 0x91, 0xA7, 0x9B, 0x72, 0x9A, 0x80, 0x97, 0x99, 0xB0, 0x90, 0x91,
+  90           0x85, 0x81, 0x9E, 0x6F, 0xA5, 0x92, 0x8F, 0x7F, 0x91, 0x7B, 0x78, 0x86, 0x7A, 0xA7, 0x92, 0xA1,
+  91           0x5A, 0x6D, 0x70, 0x73, 0x81, 0x98, 0x76, 0x87, 0x74, 0x62, 0x7B, 0x65, 0x68, 0x60, 0x8B, 0x7C,
+  92           0x8D, 0x69, 0x75, 0x64, 0x5F, 0x61, 0x7D, 0x98, 0x6B, 0x77, 0x6F, 0x72, 0x60, 0x7C, 0x71, 0x7E,
+  93           0x6D, 0x80, 0x88, 0x6F, 0x6A, 0x72, 0x85, 0x9F, 0x64, 0x7D, 0x89, 0x86, 0x5C, 0x9E, 0x67, 0x9B,
+  94           0x75, 0x83, 0x86, 0x7D, 0xA0, 0x88, 0x85, 0x5D, 0x7D, 0x6C, 0x6A, 0x5C, 0x6E, 0x7E, 0x8B, 0x60,
+  95           0x6F, 0x74, 0x66, 0x68, 0x69, 0x7E, 0x7C, 0x85, 0x86, 0x79, 0x43, 0x7F, 0x68, 0x79, 0x97, 0x78,
+  96           0x8B, 0x79, 0x8D, 0x6C, 0x8E, 0x6B, 0x88, 0x90, 0x93, 0x8F, 0x95, 0x90, 0x71, 0x8E, 0x77, 0x98,
+  97           0x9B, 0x93, 0x88, 0x93, 0x7E, 0x87, 0x8E, 0x83, 0x8A, 0x91, 0x7F, 0x9B, 0x8B, 0x71, 0x7D, 0x7B,
+  98           0x6B, 0x91, 0x88, 0x83, 0x6A, 0x75, 0x45, 0x9C, 0x63, 0x6E, 0x82, 0x6B, 0x66, 0x6D, 0x66, 0x79,
+  99           0x86, 0x7D, 0x75, 0x5C, 0x4A, 0x5C, 0x4F, 0x69, 0x5E, 0x68, 0x66, 0x4E, 0x63, 0x4B, 0x59, 0x53,
+ 100           0x58, 0x6F, 0x6A, 0x53, 0x66, 0x65, 0x63, 0x6A, 0x5B, 0x66, 0x89, 0x6C, 0x72, 0x77, 0x7F, 0x75,
+ 101           0x7F, 0x83, 0x7F, 0x90, 0x87, 0x78, 0xB3, 0x75, 0x99, 0x92, 0x96, 0x70, 0xC1, 0x8F, 0xA6, 0xA9,
+ 102           0x8F, 0x66, 0xB0, 0x87, 0xAC, 0x9D, 0x79, 0xBC, 0x7D, 0x9D, 0x9C, 0xA1, 0x6C, 0x8D, 0x78, 0x99,
+ 103           0x96, 0x79, 0x88, 0x83, 0x72, 0x87, 0x5C, 0x73, 0x79, 0x68, 0x7B, 0x7C, 0x71, 0x6B, 0x5D, 0x64,
+ 104           0x6C, 0x5E, 0x65, 0x6C, 0x70, 0x5F, 0x50, 0x6C, 0x69, 0x70, 0x69, 0x5C, 0x6E, 0x67, 0x64, 0x61,
+ 105           0x75, 0x61, 0x7A, 0x75, 0x8C, 0x70, 0x64, 0x80, 0x96, 0x86, 0x6C, 0x75, 0x91, 0x87, 0x9D, 0x84,
+ 106           0x7F, 0x9B, 0x65, 0x91, 0x92, 0x9E, 0x70, 0x7E, 0x80, 0x70, 0x78, 0x7D, 0x96, 0x88, 0x6B, 0x68,
+ 107           0x7D, 0x76, 0x6F, 0x82, 0x6A, 0x88, 0x79, 0x86, 0x43, 0x69, 0x62, 0x67, 0x7A, 0x78, 0x70, 0x74,
+ 108           0x76, 0x58, 0x7B, 0x5D, 0x69, 0x82, 0x8A, 0x79, 0x74, 0x79, 0x76, 0x76, 0x68, 0x88, 0x86, 0x8A,
+ 109           0x6C, 0x8D, 0x88, 0x7A, 0x7E, 0x8D, 0x83, 0x9A, 0x66, 0x95, 0xA8, 0x55, 0x97, 0x93, 0x89, 0x74,
+ 110           0xA3, 0x8F, 0x99, 0x88, 0x69, 0x9F, 0x7F, 0x80, 0x74, 0x95, 0x7A, 0x7F, 0x7D, 0x87, 0x7C, 0x77,
+ 111           0x6F, 0x5C, 0x9D, 0x6A, 0x74, 0x7F, 0x74, 0x62, 0x91, 0x59, 0x7C, 0x67, 0x51, 0x87, 0x7C, 0x6D,
+ 112           0x69, 0x73, 0x44, 0x8D, 0x63, 0x77, 0x7B, 0x6C, 0x7C, 0x6C, 0x83, 0x6B, 0x8A, 0x7A, 0x83, 0x74,
+ 113           0x8D, 0x7C, 0x9E, 0x73, 0x6F, 0x9F, 0x7F, 0x8C, 0x90, 0x5B, 0x91, 0x94, 0x61, 0xB9, 0x6E, 0x84,
+ 114           0x87, 0xA0, 0x83, 0x9B, 0x95, 0x85, 0x91, 0x54, 0xD3, 0x93, 0xB6, 0x8D, 0x9B, 0x76, 0x84, 0xAD,
+ 115           0xBD, 0xB7, 0x5F, 0x9B, 0x76, 0x9C, 0x8B, 0x8E, 0x95, 0xAE, 0x89, 0x94, 0x7D, 0x7F, 0x76, 0x65,
+ 116           0x97, 0x91, 0x8D, 0x82, 0x87, 0x59, 0x68, 0x5C, 0x72, 0x7B, 0x76, 0x6F, 0x59, 0x7A, 0x5D, 0x6E,
+ 117           0x48, 0x6C, 0x63, 0x72, 0x64, 0x64, 0x69, 0x36, 0x67, 0x61, 0x79, 0x4D, 0x7C, 0x63, 0x72, 0x5A,
+ 118           0x68, 0x5F, 0x68, 0x7A, 0x87, 0x7A, 0x85, 0x53, 0x7A, 0x99, 0x62, 0x87, 0xA2, 0x7F, 0x8C, 0x6D,
+ 119           0x94, 0xA3, 0x8D, 0x86, 0x9C, 0x8A, 0x97, 0x9B, 0x98, 0xA2, 0x91, 0x92, 0x8F, 0x9B, 0x7D, 0x90,
+ 120           0x92, 0xAD, 0x88, 0x8B, 0x84, 0x86, 0x96, 0x7D, 0x84, 0x75, 0x93, 0x6E, 0x90, 0x64, 0x84, 0x7B,
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 5   
+
+ 121           0x70, 0x9C, 0x6E, 0x67, 0x65, 0x6C, 0x6E, 0x74, 0x61, 0x7B, 0x77, 0x84, 0x64, 0x5E, 0x8C, 0x91,
+ 122           0x7D, 0x62, 0x78, 0x7D, 0x73, 0x8B, 0x7D, 0x92, 0x79, 0x5F, 0x8D, 0x8D, 0x8D, 0x7D, 0x8E, 0x86,
+ 123           0x73, 0x75, 0x8B, 0x9C, 0x80, 0x6F, 0x74, 0x8E, 0x76, 0x65, 0x86, 0x78, 0x98, 0x81, 0x8E, 0x65,
+ 124           0x74, 0x65, 0x70, 0x8B, 0x7D, 0x78, 0x73, 0x7B, 0x5B, 0x6B, 0x5D, 0x74, 0x7F, 0x77, 0x75, 0x6E,
+ 125           0x74, 0x70, 0x72, 0x6A, 0x6C, 0x7A, 0x92, 0x73, 0x7E, 0x73, 0x77, 0x78, 0x82, 0x7B, 0x81, 0x85,
+ 126           0x8A, 0x72, 0x90, 0x67, 0x8B, 0x91, 0x8D, 0x7A, 0xAB, 0x93, 0x8F, 0x86, 0xA0, 0x5F, 0xA8, 0x7F,
+ 127           0x8C, 0x96, 0x69, 0xAA, 0x82, 0x98, 0x72, 0x8E, 0x4F, 0x8D, 0x7C, 0x74, 0x8A, 0x78, 0x6D, 0x7F,
+ 128           0x68, 0x7A, 0x67, 0x52, 0x76, 0x67, 0x83, 0x6F, 0x72, 0x5A, 0x6A, 0x51, 0x6C, 0x6E, 0x72, 0x68,
+ 129           0x5C, 0x73, 0x6B, 0x6C, 0x65, 0x7D, 0x75, 0x70, 0x67, 0x7B, 0x8A, 0x4C, 0x7E, 0x6B, 0x9C, 0x86,
+ 130           0x95, 0x80, 0x62, 0x92, 0x8B, 0x98, 0x7C, 0xA1, 0x68, 0xB5, 0x8E, 0xA0, 0x89, 0x78, 0x8E, 0x93,
+ 131           0x9C, 0x95, 0x99, 0x71, 0x87, 0x5E, 0x8B, 0x9A, 0xAD, 0x78, 0x8E, 0x89, 0x6D, 0x62, 0x8C, 0x66,
+ 132           0x86, 0x95, 0x8C, 0x90, 0x48, 0x65, 0x6C, 0x91, 0x73, 0x7C, 0x9F, 0x6C, 0x71, 0x4F, 0x62, 0x6F,
+ 133           0x6B, 0x72, 0xA7, 0x80, 0x67, 0x60, 0x63, 0x7C, 0x5E, 0x84, 0x8E, 0x89, 0x73, 0x7A, 0x6E, 0x79,
+ 134           0x6B, 0x76, 0x7F, 0x77, 0xA3, 0x6F, 0x73, 0x7A, 0x71, 0x77, 0x98, 0x97, 0x88, 0x71, 0x9D, 0x72,
+ 135           0x8E, 0x64, 0x71, 0x92, 0x86, 0x93, 0x75, 0x97, 0x86, 0x6B, 0x99, 0x8B, 0x76, 0x72, 0x7C, 0x88,
+ 136           0x7A, 0x85, 0x78, 0x7D, 0x93, 0x6D, 0x78, 0x60, 0x74, 0x75, 0x83, 0x80, 0x84, 0x80, 0x5A, 0x81,
+ 137           0x6F, 0x75, 0x74, 0x81, 0x80, 0x7A, 0x67, 0x73, 0x78, 0x7B, 0x6E, 0x7D, 0x78, 0x81, 0x74, 0x68,
+ 138           0x6E, 0x65, 0x8E, 0x7D, 0x67, 0x56, 0x63, 0x7D, 0x5E, 0x5C, 0x72, 0x71, 0x5B, 0x9C, 0x74, 0x6D,
+ 139           0x66, 0x5B, 0x86, 0x8C, 0x90, 0x86, 0x9D, 0x7A, 0x6C, 0x78, 0x92, 0x9C, 0x99, 0x8F, 0x90, 0x96,
+ 140           0x71, 0x85, 0xAD, 0x97, 0x8B, 0xAC, 0x9C, 0x88, 0x85, 0x98, 0x8A, 0x9E, 0x7B, 0xA5, 0xAE, 0x8E,
+ 141           0x76, 0x7C, 0x8A, 0x82, 0x7A, 0x8A, 0x9E, 0x7A, 0x82, 0x74, 0x78, 0x85, 0x4E, 0x79, 0x87, 0x72,
+ 142           0x6B, 0x76, 0x61, 0x75, 0x5C, 0x56, 0x81, 0x75, 0x5E, 0x62, 0x76, 0x4A, 0x6B, 0x61, 0x7B, 0x4C,
+ 143           0x6A, 0x71, 0x78, 0x84, 0x49, 0x57, 0x88, 0x72, 0x5C, 0x95, 0x66, 0xA0, 0x61, 0x77, 0x8F, 0x83,
+ 144           0x71, 0x8B, 0x91, 0x7C, 0x8E, 0x84, 0x9E, 0x8B, 0x84, 0x9A, 0x82, 0x86, 0x98, 0x8E, 0xAA, 0x8D,
+ 145           0x92, 0x94, 0x73, 0xA9, 0x86, 0x89, 0x7F, 0x91, 0x7B, 0xA7, 0x74, 0x7B, 0x9A, 0x6A, 0x8E, 0x7A,
+ 146           0x8A, 0x74, 0x75, 0x5F, 0x7C, 0x77, 0x6C, 0x95, 0x5F, 0x65, 0x71, 0x8E, 0x70, 0x61, 0x5D, 0x84,
+ 147           0x68, 0x98, 0x83, 0x79, 0x6F, 0x55, 0x9A, 0x84, 0x99, 0x7A, 0x8F, 0x56, 0x7A, 0x6C, 0xA0, 0x91,
+ 148           0x8F, 0x8A, 0x7F, 0x84, 0x73, 0x91, 0x8E, 0x8D, 0x6F, 0xA6, 0x9D, 0x61, 0x7E, 0x85, 0x80, 0x8C,
+ 149           0x83, 0x8D, 0xAD, 0x4F, 0x76, 0x80, 0x7A, 0x74, 0x7E, 0x82, 0x95, 0x64, 0x6D, 0x95, 0x65, 0x75,
+ 150           0x4C, 0x82, 0x82, 0x6E, 0x6A, 0x7A, 0x71, 0x61, 0x72, 0x64, 0x82, 0x72, 0x63, 0x68, 0x8A, 0x47,
+ 151           0x9A, 0x74, 0x81, 0x4F, 0x8F, 0x88, 0x7F, 0x9A, 0x60, 0x6F, 0x89, 0x68, 0x78, 0xB5, 0x66, 0x92,
+ 152           0x7D, 0x74, 0xB3, 0x7F, 0x76, 0x93, 0x8B, 0x85, 0x91, 0x8F, 0x9E, 0x79, 0x7F, 0x92, 0x85, 0x81,
+ 153           0x7C, 0x85, 0x9B, 0x86, 0x61, 0xA2, 0x6C, 0x93, 0x66, 0x79, 0x83, 0x89, 0x6E, 0x83, 0x76, 0x5C,
+ 154           0x7F, 0x71, 0x93, 0x6A, 0x73, 0x72, 0x74, 0x6B, 0x70, 0x7E, 0x82, 0x80, 0x53, 0x88, 0x67, 0x8E,
+ 155           0x6F, 0x55, 0x6D, 0x73, 0x56, 0xB7, 0x72, 0x61, 0x73, 0x45, 0x8A, 0x70, 0x87, 0x7A, 0x80, 0x57,
+ 156           0x6E, 0x5E, 0x7A, 0x96, 0x69, 0x7B, 0x76, 0x80, 0x63, 0x6E, 0x76, 0x6F, 0x72, 0x9B, 0x8D, 0x6D,
+ 157           0x67, 0x56, 0x82, 0x7B, 0x7A, 0x87, 0x90, 0x6E, 0x7A, 0x6C, 0x7D, 0x79, 0x61, 0x99, 0x8C, 0x85,
+ 158           0x87, 0x7A, 0x85, 0x7B, 0x4B, 0xA3, 0x94, 0x81, 0x7F, 0x83, 0x80, 0x97, 0x73, 0x87, 0xA5, 0x4A,
+ 159           0x93, 0x82, 0x7E, 0x80, 0x74, 0x87, 0x9B, 0x7D, 0x74, 0x95, 0x6C, 0x8B, 0x75, 0x81, 0x7E, 0x79,
+ 160           0x74, 0x84, 0x7B, 0x78, 0x79, 0x82, 0x85, 0x69, 0x75, 0x65, 0x80, 0x83, 0x6E, 0x74, 0x78, 0x68,
+ 161           0x76, 0x7E, 0x6E, 0x96, 0x5E, 0x7B, 0x81, 0x68, 0x6D, 0x7E, 0x70, 0x89, 0x74, 0x6C, 0xA7, 0x69,
+ 162           0x74, 0x70, 0x7D, 0x7D, 0x86, 0x73, 0x94, 0x74, 0x73, 0x8D, 0x7D, 0x86, 0x77, 0x87, 0x82, 0x86,
+ 163           0x6D, 0x95, 0x7F, 0x7F, 0x80, 0x7F, 0x96, 0x7A, 0x88, 0x84, 0x87, 0x71, 0x89, 0x80, 0x94, 0x71,
+ 164           0x80, 0x85, 0x7D, 0x88, 0x7D, 0x84, 0x82, 0x84, 0x72, 0x93, 0x6D, 0x81, 0x80, 0x6D, 0x8B, 0x7B,
+ 165           0x7A, 0x7E, 0x7E, 0x69, 0x84, 0x6B, 0x8E, 0x78, 0x73, 0x76, 0x75, 0x83, 0x70, 0x7B, 0x75, 0x7E,
+ 166           0x63, 0x85, 0x78, 0x76, 0x71, 0x72, 0x7D, 0x78, 0x6E, 0x78, 0x88, 0x63, 0x7B, 0x72, 0x91, 0x75,
+ 167           0x77, 0x7B, 0x80, 0x73, 0x7C, 0x82, 0x85, 0x80, 0x64, 0x96, 0x7B, 0x84, 0x83, 0x81, 0x84, 0x84,
+ 168           0x75, 0x8A, 0x90, 0x6D, 0x8E, 0x7E, 0x88, 0x85, 0x83, 0x83, 0x8D, 0x6E, 0x88, 0x89, 0x81, 0x89,
+ 169           0x74, 0x85, 0x87, 0x83, 0x7E, 0x8D, 0x72, 0x84, 0x78, 0x7D, 0x8B, 0x78, 0x80, 0x74, 0x81, 0x7A,
+ 170           0x82, 0x75, 0x84, 0x71, 0x77, 0x76, 0x79, 0x81, 0x62, 0x7C, 0x74, 0x7B, 0x72, 0x83, 0x73, 0x7C,
+ 171           0x69, 0x76, 0x84, 0x6F, 0x79, 0x78, 0x78, 0x76, 0x7C, 0x71, 0x95, 0x68, 0x79, 0x83, 0x7A, 0x80,
+ 172           0x7A, 0x7E, 0x7E, 0x7E, 0x75, 0x9B, 0x78, 0x84, 0x7D, 0x84, 0x83, 0x82, 0x80, 0x8B, 0x82, 0x77,
+ 173           0x8B, 0x82, 0x92, 0x7E, 0x89, 0x82, 0x86, 0x82, 0x89, 0x87, 0x7F, 0x82, 0x7C, 0x8F, 0x7B, 0x8C,
+ 174           0x7C, 0x83, 0x80, 0x81, 0x7B, 0x89, 0x7A, 0x78, 0x81, 0x70, 0x90, 0x77, 0x7B, 0x7A, 0x7B, 0x70,
+ 175           0x7E, 0x75, 0x7F, 0x7A, 0x63, 0x83, 0x76, 0x79, 0x74, 0x7A, 0x74, 0x7D, 0x69, 0x81, 0x7E, 0x6C,
+ 176           0x77, 0x74, 0x80, 0x75, 0x7B, 0x77, 0x85, 0x68, 0x7D, 0x7E, 0x82, 0x7B, 0x73, 0x83, 0x7D, 0x7F,
+ 177           0x7B, 0x88, 0x7A, 0x82, 0x75, 0x8D, 0x82, 0x7F, 0x84, 0x7E, 0x84, 0x81, 0x84, 0x82, 0x89, 0x74,
+ 178           0x8C, 0x7E, 0x85, 0x89, 0x7A, 0x84, 0x83, 0x7F, 0x82, 0x88, 0x79, 0x8A, 0x74, 0x81, 0x84, 0x80,
+ 179           0x7F, 0x80, 0x7A, 0x7F, 0x82, 0x76, 0x88, 0x75, 0x7C, 0x7A, 0x7F, 0x7B, 0x7C, 0x79, 0x7C, 0x7A,
+ 180           0x74, 0x85, 0x77, 0x7E, 0x6E, 0x7D, 0x7A, 0x7B, 0x79, 0x80, 0x78, 0x75, 0x79, 0x7A, 0x85, 0x6D,
+ 181           0x80, 0x7A, 0x7C, 0x79, 0x81, 0x7C, 0x82, 0x75, 0x7B, 0x8B, 0x77, 0x81, 0x7C, 0x80, 0x7C, 0x7E,
+ 182           0x7B, 0x92, 0x79, 0x7C, 0x85, 0x7D, 0x87, 0x7D, 0x82, 0x81, 0x82, 0x77, 0x8E, 0x7E, 0x84, 0x80,
+ 183           0x7D, 0x85, 0x7F, 0x81, 0x7F, 0x82, 0x7A, 0x83, 0x7B, 0x88, 0x7F, 0x7F, 0x7D, 0x7D, 0x85, 0x7C,
+ 184           0x7F, 0x7D, 0x81, 0x76, 0x81, 0x7B, 0x88, 0x7A, 0x77, 0x83, 0x7D, 0x7B, 0x7B, 0x7E, 0x7A, 0x7D,
+ 185           0x6F, 0x85, 0x7C, 0x79, 0x7B, 0x7C, 0x7B, 0x7B, 0x7A, 0x7E, 0x81, 0x6A, 0x82, 0x7C, 0x80, 0x7B,
+ 186           0x7B, 0x7C, 0x7F, 0x76, 0x7E, 0x82, 0x78, 0x7F, 0x78, 0x81, 0x7C, 0x81, 0x7D, 0x82, 0x7A, 0x7F,
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 6   
+
+ 187           0x80, 0x80, 0x82, 0x79, 0x82, 0x7B, 0x83, 0x7F, 0x84, 0x7D, 0x81, 0x7C, 0x83, 0x82, 0x7E, 0x85,
+ 188           0x79, 0x81, 0x7F, 0x80, 0x80, 0x83, 0x7B, 0x84, 0x7D, 0x7F, 0x87, 0x7A, 0x81, 0x7E, 0x7F, 0x7E,
+ 189           0x84, 0x7B, 0x84, 0x78, 0x7E, 0x84, 0x7D, 0x7F, 0x7D, 0x7E, 0x7C, 0x7E, 0x7A, 0x87, 0x79, 0x7B,
+ 190           0x7B, 0x7F, 0x7D, 0x7B, 0x7D, 0x7D, 0x7C, 0x75, 0x83, 0x7C, 0x7F, 0x76, 0x7E, 0x7F, 0x7C, 0x7D,
+ 191           0x7E, 0x7F, 0x79, 0x7C, 0x7B, 0x86, 0x78, 0x7F, 0x7D, 0x7E, 0x7D, 0x7E, 0x7F, 0x82, 0x7D, 0x7B,
+ 192           0x84, 0x7C, 0x84, 0x7D, 0x7E, 0x81, 0x80, 0x7D, 0x84, 0x80, 0x7E, 0x81, 0x7B, 0x85, 0x7F, 0x80,
+ 193           0x7E, 0x82, 0x7D, 0x83, 0x7E, 0x82, 0x83, 0x7A, 0x81, 0x7F, 0x84, 0x7D, 0x7F, 0x7D, 0x82, 0x7B,
+ 194           0x80, 0x81, 0x7F, 0x7E, 0x7B, 0x83, 0x7E, 0x7F, 0x7C, 0x80, 0x7B, 0x7F, 0x7B, 0x82, 0x7E, 0x79,
+ 195           0x80, 0x7B, 0x7E, 0x82, 0x7D, 0x7F, 0x7F, 0x7B, 0x81, 0x80, 0x78, 0x82, 0x7A, 0x80, 0x80, 0x7B,
+ 196           0x7E, 0x7F, 0x7A, 0x7F, 0x7F, 0x7B, 0x81, 0x78, 0x7F, 0x7E, 0x7F, 0x7D, 0x7F, 0x7C, 0x7E, 0x7C,
+ 197           0x7D, 0x81, 0x7C, 0x7F, 0x7A, 0x81, 0x7E, 0x7E, 0x7E, 0x80, 0x7C, 0x7D, 0x7E, 0x80, 0x81, 0x77,
+ 198           0x81, 0x7F, 0x7F, 0x7E, 0x81, 0x7E, 0x82, 0x79, 0x80, 0x84, 0x7B, 0x80, 0x7E, 0x80, 0x7F, 0x7E,
+ 199           0x7E, 0x85, 0x7B, 0x7E, 0x81, 0x7F, 0x81, 0x7D, 0x7F, 0x80, 0x7F, 0x7D, 0x85, 0x7D, 0x80, 0x7E,
+ 200           0x7E, 0x81, 0x7F, 0x7F, 0x7E, 0x80, 0x7D, 0x81, 0x7E, 0x82, 0x7E, 0x7F, 0x7D, 0x7E, 0x81, 0x7D,
+ 201           0x7F, 0x7F, 0x7E, 0x7D, 0x81, 0x7D, 0x82, 0x7C, 0x7D, 0x81, 0x7E, 0x7E, 0x7F, 0x7E, 0x7E, 0x7F,
+ 202           0x7A, 0x85, 0x7D, 0x7D, 0x7F, 0x7E, 0x7E, 0x7F, 0x7D, 0x80, 0x7F, 0x79, 0x82, 0x7E, 0x80, 0x7E,
+ 203           0x7F, 0x7E, 0x80, 0x7D, 0x81, 0x80, 0x7B, 0x7F, 0x7E, 0x82, 0x7E, 0x7F, 0x7F, 0x80, 0x7C, 0x80,
+ 204           0x80, 0x81, 0x7E, 0x7D, 0x82, 0x7E, 0x81, 0x7F, 0x80, 0x7F, 0x80, 0x7D, 0x82, 0x7F, 0x7E, 0x80,
+ 205           0x7C, 0x81, 0x7F, 0x7E, 0x80, 0x80, 0x7C, 0x81, 0x7E, 0x80, 0x81, 0x7B, 0x7F, 0x7F, 0x7F, 0x7F,
+ 206           0x80, 0x7D, 0x80, 0x7B, 0x7F, 0x81, 0x7E, 0x7E, 0x7E, 0x7F, 0x7E, 0x7F, 0x7D, 0x81, 0x7C, 0x7E,
+ 207           0x7E, 0x80, 0x7F, 0x7D, 0x7F, 0x7F, 0x7E, 0x7D, 0x81, 0x7F, 0x7F, 0x7B, 0x80, 0x7F, 0x7E, 0x7F,
+ 208           0x7F, 0x7F, 0x7E, 0x7E, 0x7F, 0x82, 0x7C, 0x80, 0x7F, 0x7F, 0x80, 0x7F, 0x7F, 0x81, 0x7E, 0x7F,
+ 209           0x82, 0x7E, 0x81, 0x7E, 0x7F, 0x80, 0x80, 0x7F, 0x81, 0x7F, 0x7F, 0x80, 0x7E, 0x82, 0x7F, 0x7F,
+ 210           0x7E, 0x80, 0x7F, 0x80, 0x7F, 0x80, 0x7F, 0x7E, 0x80, 0x7F, 0x81, 0x7D, 0x7F, 0x7F, 0x7F, 0x7E,
+ 211           0x80, 0x7F, 0x7F, 0x7E, 0x7E, 0x82, 0x7E, 0x7F, 0x7F, 0x7F, 0x7E, 0x7F, 0x7E, 0x81, 0x7E, 0x7E,
+ 212           0x80, 0x7E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7D, 0x81, 0x7F, 0x7E, 0x7F, 0x7F, 0x80, 0x7F, 0x7F,
+ 213           0x7F, 0x80, 0x7D, 0x80, 0x7F, 0x80, 0x7F, 0x7F, 0x80, 0x7F, 0x80, 0x7F, 0x80, 0x7F, 0x80, 0x7F,
+ 214           0x80, 0x7F, 0x80, 0x7F, 0x7F, 0x80, 0x7F, 0x7F, 0x80, 0x80, 0x7F, 0x80, 0x7F, 0x80, 0x7F, 0x7F,
+ 215           0x80, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x80, 0x7E, 0x80, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F,
+ 216           0x7F, 0x80, 0x7F, 0x7F, 0x7F, 0x80, 0x7F, 0x7F, 0x7F, 0x80, 0x7F, 0x7F, 0x80, 0x7F, 0x7F, 0x7F,
+ 217           0x80, 0x7F, 0x7F, 0x7F, 0x80, 0x7F, 0x7F, 0x7F, 0x80, 0x80, 0x7F, 0x80, 0x00, 0x00, 0x00, 0x00 };
+ 218          
+ 219          
+ 220          /*-------------------------------------------------------------------------*/
+ 221          // Prirazeni PINu
+ 222          sbit    pin0         = P2^0;
+ 223          sbit    pin1         = P2^1;
+ 224          sbit    pin2         = P2^2;
+ 225          sbit    pin3         = P2^3;
+ 226          sbit    pin4         = P2^4;
+ 227          sbit    pin5         = P2^5;
+ 228          sbit    pin6         = P2^6;
+ 229          sbit    pin7         = P2^7;
+ 230          sbit    pinLight     = P0^1;
+ 231          sbit    pinPower     = P0^2;
+ 232          
+ 233          sbit    SCL             = P1^4;
+ 234          sbit    SDA             = P1^5;
+ 235          sbit    WDI             = P1^6;
+ 236          sbit    M_S             = P1^7;
+ 237          sbit    IGN             = P2^7;
+ 238          #define RXD1              INT0
+ 239          #define TXD1                T1
+ 240          #define DIR1                T0
+ 241          #define RXM               INT1
+ 242          
+ 243          /*-------------------------------------------------------------------------*/
+ 244          // Promenne HW_komunikace
+ 245          static uchar data RByte;             // Byte nacteny z bufferu
+ 246          
+ 247          uint  S_Index;
+ 248          uchar Pause;
+ 249          bit   bPlaying;
+ 250          bit   bMoveDoors,bMoveDoorsBack;
+ 251          bit   bStopPush,bStopPushBack;
+ 252          uchar Time;
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 7   
+
+ 253          
+ 254          
+ 255          /*===========================================================================*/
+ 256          /*                    Inicializace a nastaveni HW serialu                    */
+ 257          /*---------------------------------------------------------------------------*/
+ 258          static void Init()
+ 259          { //CKCON=0x01;    // 6 taktovy rezim (Pouze pro procesory TEMIC !!!)
+ 260   1        IE=0;          // Zakaz vsech preruseni
+ 261   1        RXD=1;         // RXD0 jako vstup            ( pro jistotu )
+ 262   1        TXD=1;         // TXD0 do neaktivního stavu  ( pro jistotu )
+ 263   1        SCON=0x40;     // Nastaveni serioveho kanalu
+ 264   1        TMOD=0x21;     // Nastaveni modu casovace 1
+ 265   1        PCON=0;        // Dvojnasobna rychlost
+ 266   1        TL1=0xFB;      // Nastaveni baud rate
+ 267   1        TH1=0xFB;      // Nastaveni baud rate
+ 268   1        TR1=1;         // Povoleni casovace 1
+ 269   1        ET0=0;         // Zakazani preruseni casovace 0
+ 270   1        ET1=0;         // Zakazani preruseni casovace 1
+ 271   1        ET2=0;         // Zakazani preruseni casovace 2
+ 272   1        RI=0;          // Nulovani priznaku prichoziho znaku
+ 273   1        TI=0;          // Nulovani priznaku odchoziho znaku
+ 274   1        RS0=0;         // Nastaveni registrove banky 0
+ 275   1        RS1=0;         // Nastaveni registrove banky 0
+ 276   1        REN=1;         // 1 ... povoleni prijmu serialu
+ 277   1      
+ 278   1        T2CON=0;
+ 279   1        RCAP2L=0xFF;
+ 280   1        RCAP2H=0xF3;
+ 281   1        TR2=0;         // Povoleni casovace 2
+ 282   1        ET2=0;         // Povoleni preruseni casovace 2
+ 283   1      
+ 284   1        ES=1;          // Povoleni preruseni serialu
+ 285   1        EA=1;          // Povoleni vsech preruseni
+ 286   1      }
+ 287          
+ 288          
+ 289          void ShowStatusP0()
+ 290          { if(~pin7) MCOM_SEND_CHAR('_'); else MCOM_SEND_CHAR('X');
+ 291   1        if(~pin6) MCOM_SEND_CHAR('_'); else MCOM_SEND_CHAR('X');
+ 292   1        if(~pin5) MCOM_SEND_CHAR('_'); else MCOM_SEND_CHAR('X');
+ 293   1        if(~pin4) MCOM_SEND_CHAR('_'); else MCOM_SEND_CHAR('X');
+ 294   1        if(~pin3) MCOM_SEND_CHAR('_'); else MCOM_SEND_CHAR('X');
+ 295   1        if(~pin2) MCOM_SEND_CHAR('_'); else MCOM_SEND_CHAR('X');
+ 296   1        if(~pin1) MCOM_SEND_CHAR('_'); else MCOM_SEND_CHAR('X');
+ 297   1        if(~pin0) MCOM_SEND_CHAR('_'); else MCOM_SEND_CHAR('X');
+ 298   1        MCOM_SEND_STRING("\r\n");
+ 299   1      }
+ 300          
+ 301          
+ 302          
+ 303          void PlayFile()
+ 304          { uint I;
+ 305   1      
+ 306   1        Pause=50;
+ 307   1      
+ 308   1        S_Index=0;
+ 309   1        while(1)
+ 310   1        { if(S_Index < sizeof(Sound))
+ 311   2          { P2=Sound[S_Index];
+ 312   3            S_Index++;
+ 313   3            for(I=0; I<Pause; I++); // Pausa
+ 314   3          } else break;
+ 315   2        }
+ 316   1        pin0=0;
+ 317   1      }
+ 318          
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 8   
+
+ 319          
+ 320          void PlayEnd()
+ 321          { uint I;
+ 322   1        uchar N;
+ 323   1      
+ 324   1        Pause=0x28;
+ 325   1      
+ 326   1        for(N=0; N<3; N++)
+ 327   1        { for(S_Index=0; S_Index<6000; S_Index++)
+ 328   2          { pin0=~pin0;
+ 329   3            S_Index++;
+ 330   3            for(I=0; I<Pause; I++); // Pausa ... 0x78 is OK 0x28 too
+ 331   3          }
+ 332   2          for(I=0; I<30000; I++); // Pausa
+ 333   2        }
+ 334   1        pin0=0;
+ 335   1      }
+ 336          
+ 337          
+ 338          void PlayPushButton()
+ 339          { uint I;
+ 340   1      
+ 341   1        Pause=0x0E;
+ 342   1      
+ 343   1        for(S_Index=0; S_Index<2000; S_Index++)
+ 344   1        { pin0=(S_Index/5) & 1;              //    0x10 is Ok for Keypress
+ 345   2          S_Index++;
+ 346   2          for(I=0; I<Pause; I++); // Pauza
+ 347   2        }
+ 348   1        pin0=0;
+ 349   1      }
+ 350          
+ 351          void PlayOpenDoors(bit IsOpen)
+ 352          { uint I;
+ 353   1      
+ 354   1        if(IsOpen) Pause=0x02; else Pause=0x05;
+ 355   1      
+ 356   1        for(S_Index=0; S_Index<2000; S_Index++)
+ 357   1        { pin0=(S_Index/5) & 1;              //    0x10 is Ok for Keypress
+ 358   2          S_Index++;
+ 359   2          for(I=0; I<Pause; I++); // Pauza
+ 360   2        }
+ 361   1        pin0=0;
+ 362   1      }
+ 363          
+ 364          
+ 365          
+ 366          void PlayRandal()
+ 367          { uint I;
+ 368   1        uchar N;
+ 369   1      
+ 370   1        for(N=0; N<5; N++)
+ 371   1        { Pause=50;
+ 372   2          for(S_Index=0; S_Index<20; S_Index++)
+ 373   2          { pin0=(S_Index/5) & 1;
+ 374   3            S_Index++;
+ 375   3            for(I=0; I<Pause; I++); // Pauza
+ 376   3          }
+ 377   2          Pause=350;
+ 378   2          for(S_Index=0; S_Index<20; S_Index++)
+ 379   2          { pin0=(S_Index/5) & 1;
+ 380   3            S_Index++;
+ 381   3            for(I=0; I<Pause; I++); // Pauza
+ 382   3          }
+ 383   2          Pause=650;
+ 384   2          for(S_Index=0; S_Index<20; S_Index++)
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 9   
+
+ 385   2          { pin0=(S_Index/5) & 1;
+ 386   3            S_Index++;
+ 387   3            for(I=0; I<Pause; I++); // Pauza
+ 388   3          }
+ 389   2          Pause=750;
+ 390   2          for(S_Index=0; S_Index<20; S_Index++)
+ 391   2          { pin0=(S_Index/5) & 1;
+ 392   3            S_Index++;
+ 393   3            for(I=0; I<Pause; I++); // Pauza
+ 394   3          }
+ 395   2          Pause=450;
+ 396   2          for(S_Index=0; S_Index<20; S_Index++)
+ 397   2          { pin0=(S_Index/5) & 1;
+ 398   3            S_Index++;
+ 399   3            for(I=0; I<Pause; I++); // Pauza
+ 400   3          }
+ 401   2          Pause=500;
+ 402   2          for(S_Index=0; S_Index<20; S_Index++)
+ 403   2          { pin0=(S_Index/5) & 1;
+ 404   3            S_Index++;
+ 405   3            for(I=0; I<Pause; I++); // Pauza
+ 406   3          }
+ 407   2          Pause=400;
+ 408   2          for(S_Index=0; S_Index<20; S_Index++)
+ 409   2          { pin0=(S_Index/5) & 1;
+ 410   3            S_Index++;
+ 411   3            for(I=0; I<Pause; I++); // Pauza
+ 412   3          }
+ 413   2          Pause=300;
+ 414   2          for(S_Index=0; S_Index<20; S_Index++)
+ 415   2          { pin0=(S_Index/5) & 1;
+ 416   3            S_Index++;
+ 417   3            for(I=0; I<Pause; I++); // Pauza
+ 418   3          }
+ 419   2          pin0=0;
+ 420   2        }
+ 421   1      }
+ 422          
+ 423          
+ 424          void Simul()
+ 425          { uint Delay;
+ 426   1        uchar I;
+ 427   1      
+ 428   1        pin7=0;
+ 429   1        pinLight=1; // Rozsvit svetlo v troube
+ 430   1        PlayPushButton();
+ 431   1        for(Delay=0; Delay<30000; Delay++);
+ 432   1        for(I=0; I<Time; I++)
+ 433   1        { if(pin7 | pin6) { PlayPushButton(); pin7=0; pin6=0; break; }
+ 434   2          else PlayFile();
+ 435   2        }
+ 436   1        if(~pin7 & ~pin6)
+ 437   1        { for(Delay=0; Delay<30000; Delay++);
+ 438   2          PlayEnd();
+ 439   2        }
+ 440   1        pinLight=0; // Rozsvit svetlo v troube
+ 441   1      }
+ 442          
+ 443          
+ 444          
+ 445          
+ 446          /*========================================================================*/
+ 447          /*                            Hlavni program                              */
+ 448          /*========================================================================*/
+ 449          void main()
+ 450          { Init();                   // Init HW komunikace a preruseni
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 10  
+
+ 451   1        MCOM_RESET_BUFFERS();     // Init ukazatelu pro buffery HW_serialu
+ 452   1        MCOM_SEND_STRING("\r\nSpkMenu\r\n\n");
+ 453   1        MCOM_SEND_STRING("f File\r\n");
+ 454   1        MCOM_SEND_STRING("e End\r\n");
+ 455   1        MCOM_SEND_STRING("s Start\r\n");
+ 456   1        MCOM_SEND_STRING("a Simul\r\n");
+ 457   1        MCOM_SEND_STRING("r Randal\r\n");
+ 458   1        bPlaying=0;
+ 459   1        Pause=50;
+ 460   1        Time=50;
+ 461   1        bMoveDoors=0; bMoveDoorsBack=0;
+ 462   1        bStopPush=0; bStopPushBack=0;
+ 463   1      
+ 464   1        P2=0; P0=0;
+ 465   1        pinPower=1;
+ 466   1      
+ 467   1        while(1)
+ 468   1        { if(MCOM_RIBUF)
+ 469   2          { RByte=MCOM_READBYTE();   // Nacti jeden znak z bufferu
+ 470   3            switch(RByte)
+ 471   3            { case '0': pin0=~pin0; ShowStatusP0(); break;
+ 472   4              case '1': pin1=~pin1; ShowStatusP0(); break;
+ 473   4              case '2': pin2=~pin2; ShowStatusP0(); break;
+ 474   4              case '3': pin3=~pin3; ShowStatusP0(); break;
+ 475   4              case '4': pin4=~pin4; ShowStatusP0(); break;
+ 476   4              case '5': pin5=~pin5; ShowStatusP0(); break;
+ 477   4              case '6': pin6=~pin6; ShowStatusP0(); break;
+ 478   4              case '7': pin7=~pin7; ShowStatusP0(); break;
+ 479   4              case '+': if(Pause<0xFFFE) Pause+=2; MCOM_SEND_BYTE(Pause); break;
+ 480   4              case '-': if(Pause) Pause-=2; MCOM_SEND_BYTE(Pause); break;
+ 481   4              case 'f': PlayFile(); MCOM_SEND_STRING("\r\nSound file stoped.\r\n");
+ 482   4                        break;
+ 483   4              case 'e': PlayEnd(); MCOM_SEND_STRING("\r\nEnd tone stoped.\r\n");
+ 484   4                        break;
+ 485   4              case 's': PlayPushButton(); MCOM_SEND_STRING("\r\nStart sound stoped.\r\n");
+ 486   4                        break;
+ 487   4              case 'a': Simul(); MCOM_SEND_STRING("\r\nSimul stoped.\r\n");
+ 488   4                        break;
+ 489   4              case 'r': PlayRandal(); MCOM_SEND_STRING("\r\nRandal stoped.\r\n");
+ 490   4                        break;
+ 491   4            }
+ 492   3          }
+ 493   2      
+ 494   2          if(pin7) { bStopPush=1; pin7=0; } else { bStopPush=0; }
+ 495   2      
+ 496   2          if(bStopPushBack!=bStopPush) { bStopPushBack=bStopPush; PlayPushButton(); }
+ 497   2          if(bMoveDoorsBack!=bMoveDoors) { bMoveDoorsBack=bMoveDoors; PlayOpenDoors(bMoveDoors); }
+ 498   2      
+ 499   2          if(pin1) { Time=15; Simul(); } // 10
+ 500   2          if(pin2) { Time=22; Simul(); } // 15
+ 501   2          if(pin3) { Time=30; Simul(); } // 20
+ 502   2          if(pin4) { Time=37; Simul(); } // 25
+ 503   2          if(pin5) { Time=45; Simul(); } // 30
+ 504   2      
+ 505   2          if(pin6) { bMoveDoors=1; pinLight=1; } else { bMoveDoors=0; pinLight=0; }
+ 506   2          MCOM_PROC();                                             // Obsluha HW_serialu (ASM)
+ 507   2          WDI=~WDI;                                                // Obsluha Watchdogu
+ 508   2        }
+ 509   1      }
+ 510          
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 11  
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION Init (BEGIN)
+                                           ; SOURCE LINE # 258
+                                           ; SOURCE LINE # 259
+                                           ; SOURCE LINE # 260
+0000 E4            CLR     A
+0001 F5A8          MOV     IE,A
+                                           ; SOURCE LINE # 261
+0003 D2B0          SETB    RXD
+                                           ; SOURCE LINE # 262
+0005 D2B1          SETB    TXD
+                                           ; SOURCE LINE # 263
+0007 759840        MOV     SCON,#040H
+                                           ; SOURCE LINE # 264
+000A 758921        MOV     TMOD,#021H
+                                           ; SOURCE LINE # 265
+000D F587          MOV     PCON,A
+                                           ; SOURCE LINE # 266
+000F 758BFB        MOV     TL1,#0FBH
+                                           ; SOURCE LINE # 267
+0012 758DFB        MOV     TH1,#0FBH
+                                           ; SOURCE LINE # 268
+0015 D28E          SETB    TR1
+                                           ; SOURCE LINE # 269
+0017 C2A9          CLR     ET0
+                                           ; SOURCE LINE # 270
+0019 C2AB          CLR     ET1
+                                           ; SOURCE LINE # 271
+001B C2AD          CLR     ET2
+                                           ; SOURCE LINE # 272
+001D C298          CLR     RI
+                                           ; SOURCE LINE # 273
+001F C299          CLR     TI
+                                           ; SOURCE LINE # 274
+0021 C2D3          CLR     RS0
+                                           ; SOURCE LINE # 275
+0023 C2D4          CLR     RS1
+                                           ; SOURCE LINE # 276
+0025 D29C          SETB    REN
+                                           ; SOURCE LINE # 278
+0027 F5C8          MOV     T2CON,A
+                                           ; SOURCE LINE # 279
+0029 75CAFF        MOV     RCAP2L,#0FFH
+                                           ; SOURCE LINE # 280
+002C 75CBF3        MOV     RCAP2H,#0F3H
+                                           ; SOURCE LINE # 281
+002F C2CA          CLR     TR2
+                                           ; SOURCE LINE # 282
+0031 C2AD          CLR     ET2
+                                           ; SOURCE LINE # 284
+0033 D2AC          SETB    ES
+                                           ; SOURCE LINE # 285
+0035 D2AF          SETB    EA
+                                           ; SOURCE LINE # 286
+0037 22            RET     
+             ; FUNCTION Init (END)
+
+             ; FUNCTION ShowStatusP0 (BEGIN)
+                                           ; SOURCE LINE # 289
+                                           ; SOURCE LINE # 290
+0000 A2A7          MOV     C,pin7
+0002 B3            CPL     C
+0003 5007          JNC     ?C0002
+0005 7F5F          MOV     R7,#05FH
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 12  
+
+0007 120000  E     LCALL   _MCOM_SEND_CHAR
+000A 8005          SJMP    ?C0003
+000C         ?C0002:
+000C 7F58          MOV     R7,#058H
+000E 120000  E     LCALL   _MCOM_SEND_CHAR
+0011         ?C0003:
+                                           ; SOURCE LINE # 291
+0011 A2A6          MOV     C,pin6
+0013 B3            CPL     C
+0014 5007          JNC     ?C0004
+0016 7F5F          MOV     R7,#05FH
+0018 120000  E     LCALL   _MCOM_SEND_CHAR
+001B 8005          SJMP    ?C0005
+001D         ?C0004:
+001D 7F58          MOV     R7,#058H
+001F 120000  E     LCALL   _MCOM_SEND_CHAR
+0022         ?C0005:
+                                           ; SOURCE LINE # 292
+0022 A2A5          MOV     C,pin5
+0024 B3            CPL     C
+0025 5007          JNC     ?C0006
+0027 7F5F          MOV     R7,#05FH
+0029 120000  E     LCALL   _MCOM_SEND_CHAR
+002C 8005          SJMP    ?C0007
+002E         ?C0006:
+002E 7F58          MOV     R7,#058H
+0030 120000  E     LCALL   _MCOM_SEND_CHAR
+0033         ?C0007:
+                                           ; SOURCE LINE # 293
+0033 A2A4          MOV     C,pin4
+0035 B3            CPL     C
+0036 5007          JNC     ?C0008
+0038 7F5F          MOV     R7,#05FH
+003A 120000  E     LCALL   _MCOM_SEND_CHAR
+003D 8005          SJMP    ?C0009
+003F         ?C0008:
+003F 7F58          MOV     R7,#058H
+0041 120000  E     LCALL   _MCOM_SEND_CHAR
+0044         ?C0009:
+                                           ; SOURCE LINE # 294
+0044 A2A3          MOV     C,pin3
+0046 B3            CPL     C
+0047 5007          JNC     ?C0010
+0049 7F5F          MOV     R7,#05FH
+004B 120000  E     LCALL   _MCOM_SEND_CHAR
+004E 8005          SJMP    ?C0011
+0050         ?C0010:
+0050 7F58          MOV     R7,#058H
+0052 120000  E     LCALL   _MCOM_SEND_CHAR
+0055         ?C0011:
+                                           ; SOURCE LINE # 295
+0055 A2A2          MOV     C,pin2
+0057 B3            CPL     C
+0058 5007          JNC     ?C0012
+005A 7F5F          MOV     R7,#05FH
+005C 120000  E     LCALL   _MCOM_SEND_CHAR
+005F 8005          SJMP    ?C0013
+0061         ?C0012:
+0061 7F58          MOV     R7,#058H
+0063 120000  E     LCALL   _MCOM_SEND_CHAR
+0066         ?C0013:
+                                           ; SOURCE LINE # 296
+0066 A2A1          MOV     C,pin1
+0068 B3            CPL     C
+0069 5007          JNC     ?C0014
+006B 7F5F          MOV     R7,#05FH
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 13  
+
+006D 120000  E     LCALL   _MCOM_SEND_CHAR
+0070 8005          SJMP    ?C0015
+0072         ?C0014:
+0072 7F58          MOV     R7,#058H
+0074 120000  E     LCALL   _MCOM_SEND_CHAR
+0077         ?C0015:
+                                           ; SOURCE LINE # 297
+0077 A2A0          MOV     C,pin0
+0079 B3            CPL     C
+007A 5007          JNC     ?C0016
+007C 7F5F          MOV     R7,#05FH
+007E 120000  E     LCALL   _MCOM_SEND_CHAR
+0081 8005          SJMP    ?C0017
+0083         ?C0016:
+0083 7F58          MOV     R7,#058H
+0085 120000  E     LCALL   _MCOM_SEND_CHAR
+0088         ?C0017:
+                                           ; SOURCE LINE # 298
+0088 7B05          MOV     R3,#05H
+008A 7A00    R     MOV     R2,#HIGH ?SC_0
+008C 7900    R     MOV     R1,#LOW ?SC_0
+008E 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 299
+0091 22            RET     
+             ; FUNCTION ShowStatusP0 (END)
+
+             ; FUNCTION PlayFile (BEGIN)
+;---- Variable 'I' assigned to Register 'R6/R7' ----
+                                           ; SOURCE LINE # 303
+                                           ; SOURCE LINE # 304
+                                           ; SOURCE LINE # 306
+0000 750032  R     MOV     Pause,#032H
+                                           ; SOURCE LINE # 308
+0003 E4            CLR     A
+0004 F500    R     MOV     S_Index,A
+0006 F500    R     MOV     S_Index+01H,A
+0008         ?C0019:
+                                           ; SOURCE LINE # 309
+                                           ; SOURCE LINE # 310
+0008 C3            CLR     C
+0009 E500    R     MOV     A,S_Index+01H
+000B 9480          SUBB    A,#080H
+000D E500    R     MOV     A,S_Index
+000F 940C          SUBB    A,#0CH
+0011 502B          JNC     ?C0020
+                                           ; SOURCE LINE # 311
+0013 7400    R     MOV     A,#LOW Sound
+0015 2500    R     ADD     A,S_Index+01H
+0017 F582          MOV     DPL,A
+0019 E500    R     MOV     A,S_Index
+001B 3400    R     ADDC    A,#HIGH Sound
+001D F583          MOV     DPH,A
+001F E4            CLR     A
+0020 93            MOVC    A,@A+DPTR
+0021 F5A0          MOV     P2,A
+                                           ; SOURCE LINE # 312
+0023 0500    R     INC     S_Index+01H
+0025 E500    R     MOV     A,S_Index+01H
+0027 7002          JNZ     ?C0154
+0029 0500    R     INC     S_Index
+002B         ?C0154:
+                                           ; SOURCE LINE # 313
+002B E4            CLR     A
+002C FE            MOV     R6,A
+002D FF            MOV     R7,A
+002E         ?C0022:
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 14  
+
+002E C3            CLR     C
+002F EF            MOV     A,R7
+0030 9500    R     SUBB    A,Pause
+0032 EE            MOV     A,R6
+0033 9400          SUBB    A,#00H
+0035 50D1          JNC     ?C0019
+0037 0F            INC     R7
+0038 BF0001        CJNE    R7,#00H,?C0155
+003B 0E            INC     R6
+003C         ?C0155:
+003C 80F0          SJMP    ?C0022
+                                           ; SOURCE LINE # 314
+                                           ; SOURCE LINE # 315
+003E         ?C0020:
+                                           ; SOURCE LINE # 316
+003E C2A0          CLR     pin0
+                                           ; SOURCE LINE # 317
+0040 22            RET     
+             ; FUNCTION PlayFile (END)
+
+             ; FUNCTION PlayEnd (BEGIN)
+;---- Variable 'I' assigned to Register 'R6/R7' ----
+                                           ; SOURCE LINE # 320
+                                           ; SOURCE LINE # 321
+                                           ; SOURCE LINE # 324
+0000 750028  R     MOV     Pause,#028H
+                                           ; SOURCE LINE # 326
+;---- Variable 'N' assigned to Register 'R5' ----
+0003 E4            CLR     A
+0004 FD            MOV     R5,A
+0005         ?C0027:
+                                           ; SOURCE LINE # 327
+0005 E4            CLR     A
+0006 F500    R     MOV     S_Index,A
+0008 F500    R     MOV     S_Index+01H,A
+000A         ?C0030:
+                                           ; SOURCE LINE # 328
+000A B2A0          CPL     pin0
+                                           ; SOURCE LINE # 329
+000C 0500    R     INC     S_Index+01H
+000E E500    R     MOV     A,S_Index+01H
+0010 7002          JNZ     ?C0156
+0012 0500    R     INC     S_Index
+0014         ?C0156:
+                                           ; SOURCE LINE # 330
+0014 E4            CLR     A
+0015 FE            MOV     R6,A
+0016 FF            MOV     R7,A
+0017         ?C0033:
+0017 E500    R     MOV     A,Pause
+0019 FB            MOV     R3,A
+001A C3            CLR     C
+001B EF            MOV     A,R7
+001C 9B            SUBB    A,R3
+001D EE            MOV     A,R6
+001E 9400          SUBB    A,#00H
+0020 5007          JNC     ?C0032
+0022 0F            INC     R7
+0023 BF0001        CJNE    R7,#00H,?C0157
+0026 0E            INC     R6
+0027         ?C0157:
+0027 80EE          SJMP    ?C0033
+                                           ; SOURCE LINE # 331
+0029         ?C0032:
+0029 0500    R     INC     S_Index+01H
+002B E500    R     MOV     A,S_Index+01H
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 15  
+
+002D 7002          JNZ     ?C0158
+002F 0500    R     INC     S_Index
+0031         ?C0158:
+0031 C3            CLR     C
+0032 E500    R     MOV     A,S_Index+01H
+0034 9470          SUBB    A,#070H
+0036 E500    R     MOV     A,S_Index
+0038 9417          SUBB    A,#017H
+003A 40CE          JC      ?C0030
+003C         ?C0031:
+                                           ; SOURCE LINE # 332
+003C E4            CLR     A
+003D FE            MOV     R6,A
+003E FF            MOV     R7,A
+003F         ?C0036:
+003F 0F            INC     R7
+0040 BF0001        CJNE    R7,#00H,?C0159
+0043 0E            INC     R6
+0044         ?C0159:
+0044 BE75F8        CJNE    R6,#075H,?C0036
+0047 BF30F5        CJNE    R7,#030H,?C0036
+                                           ; SOURCE LINE # 333
+004A         ?C0029:
+004A 0D            INC     R5
+004B BD03B7        CJNE    R5,#03H,?C0027
+004E         ?C0028:
+                                           ; SOURCE LINE # 334
+004E C2A0          CLR     pin0
+                                           ; SOURCE LINE # 335
+0050 22            RET     
+             ; FUNCTION PlayEnd (END)
+
+             ; FUNCTION PlayPushButton (BEGIN)
+                                           ; SOURCE LINE # 338
+                                           ; SOURCE LINE # 339
+                                           ; SOURCE LINE # 341
+0000 75000E  R     MOV     Pause,#0EH
+                                           ; SOURCE LINE # 343
+0003 E4            CLR     A
+0004 F500    R     MOV     S_Index,A
+0006 F500    R     MOV     S_Index+01H,A
+0008         ?C0040:
+                                           ; SOURCE LINE # 344
+0008 AE00    R     MOV     R6,S_Index
+000A AF00    R     MOV     R7,S_Index+01H
+000C 7C00          MOV     R4,#00H
+000E 7D05          MOV     R5,#05H
+0010 120000  E     LCALL   ?C_UIDIV
+0013 EF            MOV     A,R7
+0014 13            RRC     A
+0015 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 345
+0017 0500    R     INC     S_Index+01H
+0019 E500    R     MOV     A,S_Index+01H
+001B 7002          JNZ     ?C0160
+001D 0500    R     INC     S_Index
+001F         ?C0160:
+                                           ; SOURCE LINE # 346
+;---- Variable 'I' assigned to Register 'R6/R7' ----
+001F E4            CLR     A
+0020 FF            MOV     R7,A
+0021 FE            MOV     R6,A
+0022         ?C0043:
+0022 C3            CLR     C
+0023 EF            MOV     A,R7
+0024 9500    R     SUBB    A,Pause
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 16  
+
+0026 EE            MOV     A,R6
+0027 9400          SUBB    A,#00H
+0029 5007          JNC     ?C0042
+002B 0F            INC     R7
+002C BF0001        CJNE    R7,#00H,?C0161
+002F 0E            INC     R6
+0030         ?C0161:
+0030 80F0          SJMP    ?C0043
+                                           ; SOURCE LINE # 347
+0032         ?C0042:
+0032 0500    R     INC     S_Index+01H
+0034 E500    R     MOV     A,S_Index+01H
+0036 7002          JNZ     ?C0162
+0038 0500    R     INC     S_Index
+003A         ?C0162:
+003A C3            CLR     C
+003B E500    R     MOV     A,S_Index+01H
+003D 94D0          SUBB    A,#0D0H
+003F E500    R     MOV     A,S_Index
+0041 9407          SUBB    A,#07H
+0043 40C3          JC      ?C0040
+0045         ?C0041:
+                                           ; SOURCE LINE # 348
+0045 C2A0          CLR     pin0
+                                           ; SOURCE LINE # 349
+0047 22            RET     
+             ; FUNCTION PlayPushButton (END)
+
+             ; FUNCTION PlayOpenDoors (BEGIN)
+                                           ; SOURCE LINE # 351
+                                           ; SOURCE LINE # 352
+                                           ; SOURCE LINE # 354
+0000 300005  R     JNB     IsOpen,?C0047
+0003 750002  R     MOV     Pause,#02H
+0006 8003          SJMP    ?C0048
+0008         ?C0047:
+0008 750005  R     MOV     Pause,#05H
+000B         ?C0048:
+                                           ; SOURCE LINE # 356
+000B E4            CLR     A
+000C F500    R     MOV     S_Index,A
+000E F500    R     MOV     S_Index+01H,A
+0010         ?C0049:
+                                           ; SOURCE LINE # 357
+0010 AE00    R     MOV     R6,S_Index
+0012 AF00    R     MOV     R7,S_Index+01H
+0014 7C00          MOV     R4,#00H
+0016 7D05          MOV     R5,#05H
+0018 120000  E     LCALL   ?C_UIDIV
+001B EF            MOV     A,R7
+001C 13            RRC     A
+001D 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 358
+001F 0500    R     INC     S_Index+01H
+0021 E500    R     MOV     A,S_Index+01H
+0023 7002          JNZ     ?C0163
+0025 0500    R     INC     S_Index
+0027         ?C0163:
+                                           ; SOURCE LINE # 359
+;---- Variable 'I' assigned to Register 'R6/R7' ----
+0027 E4            CLR     A
+0028 FF            MOV     R7,A
+0029 FE            MOV     R6,A
+002A         ?C0052:
+002A C3            CLR     C
+002B EF            MOV     A,R7
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 17  
+
+002C 9500    R     SUBB    A,Pause
+002E EE            MOV     A,R6
+002F 9400          SUBB    A,#00H
+0031 5007          JNC     ?C0051
+0033 0F            INC     R7
+0034 BF0001        CJNE    R7,#00H,?C0164
+0037 0E            INC     R6
+0038         ?C0164:
+0038 80F0          SJMP    ?C0052
+                                           ; SOURCE LINE # 360
+003A         ?C0051:
+003A 0500    R     INC     S_Index+01H
+003C E500    R     MOV     A,S_Index+01H
+003E 7002          JNZ     ?C0165
+0040 0500    R     INC     S_Index
+0042         ?C0165:
+0042 C3            CLR     C
+0043 E500    R     MOV     A,S_Index+01H
+0045 94D0          SUBB    A,#0D0H
+0047 E500    R     MOV     A,S_Index
+0049 9407          SUBB    A,#07H
+004B 40C3          JC      ?C0049
+004D         ?C0050:
+                                           ; SOURCE LINE # 361
+004D C2A0          CLR     pin0
+                                           ; SOURCE LINE # 362
+004F 22            RET     
+             ; FUNCTION PlayOpenDoors (END)
+
+             ; FUNCTION PlayRandal (BEGIN)
+;---- Variable 'I' assigned to Register 'R2/R3' ----
+                                           ; SOURCE LINE # 366
+                                           ; SOURCE LINE # 367
+                                           ; SOURCE LINE # 370
+0000 E4            CLR     A
+0001 F500    R     MOV     N,A
+0003         ?C0056:
+                                           ; SOURCE LINE # 371
+0003 750032  R     MOV     Pause,#032H
+                                           ; SOURCE LINE # 372
+0006 E4            CLR     A
+0007 F500    R     MOV     S_Index,A
+0009 F500    R     MOV     S_Index+01H,A
+000B         ?C0059:
+                                           ; SOURCE LINE # 373
+000B AE00    R     MOV     R6,S_Index
+000D AF00    R     MOV     R7,S_Index+01H
+000F 7C00          MOV     R4,#00H
+0011 7D05          MOV     R5,#05H
+0013 120000  E     LCALL   ?C_UIDIV
+0016 EF            MOV     A,R7
+0017 13            RRC     A
+0018 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 374
+001A 0500    R     INC     S_Index+01H
+001C E500    R     MOV     A,S_Index+01H
+001E 7002          JNZ     ?C0166
+0020 0500    R     INC     S_Index
+0022         ?C0166:
+                                           ; SOURCE LINE # 375
+0022 E4            CLR     A
+0023 FA            MOV     R2,A
+0024 FB            MOV     R3,A
+0025         ?C0062:
+0025 C3            CLR     C
+0026 EB            MOV     A,R3
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 18  
+
+0027 9500    R     SUBB    A,Pause
+0029 EA            MOV     A,R2
+002A 9400          SUBB    A,#00H
+002C 5007          JNC     ?C0061
+002E 0B            INC     R3
+002F BB0001        CJNE    R3,#00H,?C0167
+0032 0A            INC     R2
+0033         ?C0167:
+0033 80F0          SJMP    ?C0062
+                                           ; SOURCE LINE # 376
+0035         ?C0061:
+0035 0500    R     INC     S_Index+01H
+0037 E500    R     MOV     A,S_Index+01H
+0039 7002          JNZ     ?C0168
+003B 0500    R     INC     S_Index
+003D         ?C0168:
+003D C3            CLR     C
+003E E500    R     MOV     A,S_Index+01H
+0040 9414          SUBB    A,#014H
+0042 E500    R     MOV     A,S_Index
+0044 9400          SUBB    A,#00H
+0046 40C3          JC      ?C0059
+0048         ?C0060:
+                                           ; SOURCE LINE # 377
+0048 75005E  R     MOV     Pause,#05EH
+                                           ; SOURCE LINE # 378
+004B E4            CLR     A
+004C F500    R     MOV     S_Index,A
+004E F500    R     MOV     S_Index+01H,A
+0050         ?C0065:
+                                           ; SOURCE LINE # 379
+0050 AE00    R     MOV     R6,S_Index
+0052 AF00    R     MOV     R7,S_Index+01H
+0054 7C00          MOV     R4,#00H
+0056 7D05          MOV     R5,#05H
+0058 120000  E     LCALL   ?C_UIDIV
+005B EF            MOV     A,R7
+005C 13            RRC     A
+005D 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 380
+005F 0500    R     INC     S_Index+01H
+0061 E500    R     MOV     A,S_Index+01H
+0063 7002          JNZ     ?C0169
+0065 0500    R     INC     S_Index
+0067         ?C0169:
+                                           ; SOURCE LINE # 381
+0067 E4            CLR     A
+0068 FA            MOV     R2,A
+0069 FB            MOV     R3,A
+006A         ?C0068:
+006A C3            CLR     C
+006B EB            MOV     A,R3
+006C 9500    R     SUBB    A,Pause
+006E EA            MOV     A,R2
+006F 9400          SUBB    A,#00H
+0071 5007          JNC     ?C0067
+0073 0B            INC     R3
+0074 BB0001        CJNE    R3,#00H,?C0170
+0077 0A            INC     R2
+0078         ?C0170:
+0078 80F0          SJMP    ?C0068
+                                           ; SOURCE LINE # 382
+007A         ?C0067:
+007A 0500    R     INC     S_Index+01H
+007C E500    R     MOV     A,S_Index+01H
+007E 7002          JNZ     ?C0171
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 19  
+
+0080 0500    R     INC     S_Index
+0082         ?C0171:
+0082 C3            CLR     C
+0083 E500    R     MOV     A,S_Index+01H
+0085 9414          SUBB    A,#014H
+0087 E500    R     MOV     A,S_Index
+0089 9400          SUBB    A,#00H
+008B 40C3          JC      ?C0065
+008D         ?C0066:
+                                           ; SOURCE LINE # 383
+008D 75008A  R     MOV     Pause,#08AH
+                                           ; SOURCE LINE # 384
+0090 E4            CLR     A
+0091 F500    R     MOV     S_Index,A
+0093 F500    R     MOV     S_Index+01H,A
+0095         ?C0071:
+                                           ; SOURCE LINE # 385
+0095 AE00    R     MOV     R6,S_Index
+0097 AF00    R     MOV     R7,S_Index+01H
+0099 7C00          MOV     R4,#00H
+009B 7D05          MOV     R5,#05H
+009D 120000  E     LCALL   ?C_UIDIV
+00A0 EF            MOV     A,R7
+00A1 13            RRC     A
+00A2 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 386
+00A4 0500    R     INC     S_Index+01H
+00A6 E500    R     MOV     A,S_Index+01H
+00A8 7002          JNZ     ?C0172
+00AA 0500    R     INC     S_Index
+00AC         ?C0172:
+                                           ; SOURCE LINE # 387
+00AC E4            CLR     A
+00AD FA            MOV     R2,A
+00AE FB            MOV     R3,A
+00AF         ?C0074:
+00AF C3            CLR     C
+00B0 EB            MOV     A,R3
+00B1 9500    R     SUBB    A,Pause
+00B3 EA            MOV     A,R2
+00B4 9400          SUBB    A,#00H
+00B6 5007          JNC     ?C0073
+00B8 0B            INC     R3
+00B9 BB0001        CJNE    R3,#00H,?C0173
+00BC 0A            INC     R2
+00BD         ?C0173:
+00BD 80F0          SJMP    ?C0074
+                                           ; SOURCE LINE # 388
+00BF         ?C0073:
+00BF 0500    R     INC     S_Index+01H
+00C1 E500    R     MOV     A,S_Index+01H
+00C3 7002          JNZ     ?C0174
+00C5 0500    R     INC     S_Index
+00C7         ?C0174:
+00C7 C3            CLR     C
+00C8 E500    R     MOV     A,S_Index+01H
+00CA 9414          SUBB    A,#014H
+00CC E500    R     MOV     A,S_Index
+00CE 9400          SUBB    A,#00H
+00D0 40C3          JC      ?C0071
+00D2         ?C0072:
+                                           ; SOURCE LINE # 389
+00D2 7500EE  R     MOV     Pause,#0EEH
+                                           ; SOURCE LINE # 390
+00D5 E4            CLR     A
+00D6 F500    R     MOV     S_Index,A
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 20  
+
+00D8 F500    R     MOV     S_Index+01H,A
+00DA         ?C0077:
+                                           ; SOURCE LINE # 391
+00DA AE00    R     MOV     R6,S_Index
+00DC AF00    R     MOV     R7,S_Index+01H
+00DE 7C00          MOV     R4,#00H
+00E0 7D05          MOV     R5,#05H
+00E2 120000  E     LCALL   ?C_UIDIV
+00E5 EF            MOV     A,R7
+00E6 13            RRC     A
+00E7 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 392
+00E9 0500    R     INC     S_Index+01H
+00EB E500    R     MOV     A,S_Index+01H
+00ED 7002          JNZ     ?C0175
+00EF 0500    R     INC     S_Index
+00F1         ?C0175:
+                                           ; SOURCE LINE # 393
+00F1 E4            CLR     A
+00F2 FA            MOV     R2,A
+00F3 FB            MOV     R3,A
+00F4         ?C0080:
+00F4 C3            CLR     C
+00F5 EB            MOV     A,R3
+00F6 9500    R     SUBB    A,Pause
+00F8 EA            MOV     A,R2
+00F9 9400          SUBB    A,#00H
+00FB 5007          JNC     ?C0079
+00FD 0B            INC     R3
+00FE BB0001        CJNE    R3,#00H,?C0176
+0101 0A            INC     R2
+0102         ?C0176:
+0102 80F0          SJMP    ?C0080
+                                           ; SOURCE LINE # 394
+0104         ?C0079:
+0104 0500    R     INC     S_Index+01H
+0106 E500    R     MOV     A,S_Index+01H
+0108 7002          JNZ     ?C0177
+010A 0500    R     INC     S_Index
+010C         ?C0177:
+010C C3            CLR     C
+010D E500    R     MOV     A,S_Index+01H
+010F 9414          SUBB    A,#014H
+0111 E500    R     MOV     A,S_Index
+0113 9400          SUBB    A,#00H
+0115 40C3          JC      ?C0077
+0117         ?C0078:
+                                           ; SOURCE LINE # 395
+0117 7500C2  R     MOV     Pause,#0C2H
+                                           ; SOURCE LINE # 396
+011A E4            CLR     A
+011B F500    R     MOV     S_Index,A
+011D F500    R     MOV     S_Index+01H,A
+011F         ?C0083:
+                                           ; SOURCE LINE # 397
+011F AE00    R     MOV     R6,S_Index
+0121 AF00    R     MOV     R7,S_Index+01H
+0123 7C00          MOV     R4,#00H
+0125 7D05          MOV     R5,#05H
+0127 120000  E     LCALL   ?C_UIDIV
+012A EF            MOV     A,R7
+012B 13            RRC     A
+012C 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 398
+012E 0500    R     INC     S_Index+01H
+0130 E500    R     MOV     A,S_Index+01H
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 21  
+
+0132 7002          JNZ     ?C0178
+0134 0500    R     INC     S_Index
+0136         ?C0178:
+                                           ; SOURCE LINE # 399
+0136 E4            CLR     A
+0137 FA            MOV     R2,A
+0138 FB            MOV     R3,A
+0139         ?C0086:
+0139 C3            CLR     C
+013A EB            MOV     A,R3
+013B 9500    R     SUBB    A,Pause
+013D EA            MOV     A,R2
+013E 9400          SUBB    A,#00H
+0140 5007          JNC     ?C0085
+0142 0B            INC     R3
+0143 BB0001        CJNE    R3,#00H,?C0179
+0146 0A            INC     R2
+0147         ?C0179:
+0147 80F0          SJMP    ?C0086
+                                           ; SOURCE LINE # 400
+0149         ?C0085:
+0149 0500    R     INC     S_Index+01H
+014B E500    R     MOV     A,S_Index+01H
+014D 7002          JNZ     ?C0180
+014F 0500    R     INC     S_Index
+0151         ?C0180:
+0151 C3            CLR     C
+0152 E500    R     MOV     A,S_Index+01H
+0154 9414          SUBB    A,#014H
+0156 E500    R     MOV     A,S_Index
+0158 9400          SUBB    A,#00H
+015A 40C3          JC      ?C0083
+015C         ?C0084:
+                                           ; SOURCE LINE # 401
+015C 7500F4  R     MOV     Pause,#0F4H
+                                           ; SOURCE LINE # 402
+015F E4            CLR     A
+0160 F500    R     MOV     S_Index,A
+0162 F500    R     MOV     S_Index+01H,A
+0164         ?C0089:
+                                           ; SOURCE LINE # 403
+0164 AE00    R     MOV     R6,S_Index
+0166 AF00    R     MOV     R7,S_Index+01H
+0168 7C00          MOV     R4,#00H
+016A 7D05          MOV     R5,#05H
+016C 120000  E     LCALL   ?C_UIDIV
+016F EF            MOV     A,R7
+0170 13            RRC     A
+0171 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 404
+0173 0500    R     INC     S_Index+01H
+0175 E500    R     MOV     A,S_Index+01H
+0177 7002          JNZ     ?C0181
+0179 0500    R     INC     S_Index
+017B         ?C0181:
+                                           ; SOURCE LINE # 405
+017B E4            CLR     A
+017C FA            MOV     R2,A
+017D FB            MOV     R3,A
+017E         ?C0092:
+017E C3            CLR     C
+017F EB            MOV     A,R3
+0180 9500    R     SUBB    A,Pause
+0182 EA            MOV     A,R2
+0183 9400          SUBB    A,#00H
+0185 5007          JNC     ?C0091
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 22  
+
+0187 0B            INC     R3
+0188 BB0001        CJNE    R3,#00H,?C0182
+018B 0A            INC     R2
+018C         ?C0182:
+018C 80F0          SJMP    ?C0092
+                                           ; SOURCE LINE # 406
+018E         ?C0091:
+018E 0500    R     INC     S_Index+01H
+0190 E500    R     MOV     A,S_Index+01H
+0192 7002          JNZ     ?C0183
+0194 0500    R     INC     S_Index
+0196         ?C0183:
+0196 C3            CLR     C
+0197 E500    R     MOV     A,S_Index+01H
+0199 9414          SUBB    A,#014H
+019B E500    R     MOV     A,S_Index
+019D 9400          SUBB    A,#00H
+019F 40C3          JC      ?C0089
+01A1         ?C0090:
+                                           ; SOURCE LINE # 407
+01A1 750090  R     MOV     Pause,#090H
+                                           ; SOURCE LINE # 408
+01A4 E4            CLR     A
+01A5 F500    R     MOV     S_Index,A
+01A7 F500    R     MOV     S_Index+01H,A
+01A9         ?C0095:
+                                           ; SOURCE LINE # 409
+01A9 AE00    R     MOV     R6,S_Index
+01AB AF00    R     MOV     R7,S_Index+01H
+01AD 7C00          MOV     R4,#00H
+01AF 7D05          MOV     R5,#05H
+01B1 120000  E     LCALL   ?C_UIDIV
+01B4 EF            MOV     A,R7
+01B5 13            RRC     A
+01B6 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 410
+01B8 0500    R     INC     S_Index+01H
+01BA E500    R     MOV     A,S_Index+01H
+01BC 7002          JNZ     ?C0184
+01BE 0500    R     INC     S_Index
+01C0         ?C0184:
+                                           ; SOURCE LINE # 411
+01C0 E4            CLR     A
+01C1 FA            MOV     R2,A
+01C2 FB            MOV     R3,A
+01C3         ?C0098:
+01C3 C3            CLR     C
+01C4 EB            MOV     A,R3
+01C5 9500    R     SUBB    A,Pause
+01C7 EA            MOV     A,R2
+01C8 9400          SUBB    A,#00H
+01CA 5007          JNC     ?C0097
+01CC 0B            INC     R3
+01CD BB0001        CJNE    R3,#00H,?C0185
+01D0 0A            INC     R2
+01D1         ?C0185:
+01D1 80F0          SJMP    ?C0098
+                                           ; SOURCE LINE # 412
+01D3         ?C0097:
+01D3 0500    R     INC     S_Index+01H
+01D5 E500    R     MOV     A,S_Index+01H
+01D7 7002          JNZ     ?C0186
+01D9 0500    R     INC     S_Index
+01DB         ?C0186:
+01DB C3            CLR     C
+01DC E500    R     MOV     A,S_Index+01H
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 23  
+
+01DE 9414          SUBB    A,#014H
+01E0 E500    R     MOV     A,S_Index
+01E2 9400          SUBB    A,#00H
+01E4 40C3          JC      ?C0095
+01E6         ?C0096:
+                                           ; SOURCE LINE # 413
+01E6 75002C  R     MOV     Pause,#02CH
+                                           ; SOURCE LINE # 414
+01E9 E4            CLR     A
+01EA F500    R     MOV     S_Index,A
+01EC F500    R     MOV     S_Index+01H,A
+01EE         ?C0101:
+                                           ; SOURCE LINE # 415
+01EE AE00    R     MOV     R6,S_Index
+01F0 AF00    R     MOV     R7,S_Index+01H
+01F2 7C00          MOV     R4,#00H
+01F4 7D05          MOV     R5,#05H
+01F6 120000  E     LCALL   ?C_UIDIV
+01F9 EF            MOV     A,R7
+01FA 13            RRC     A
+01FB 92A0          MOV     pin0,C
+                                           ; SOURCE LINE # 416
+01FD 0500    R     INC     S_Index+01H
+01FF E500    R     MOV     A,S_Index+01H
+0201 7002          JNZ     ?C0187
+0203 0500    R     INC     S_Index
+0205         ?C0187:
+                                           ; SOURCE LINE # 417
+0205 E4            CLR     A
+0206 FA            MOV     R2,A
+0207 FB            MOV     R3,A
+0208         ?C0104:
+0208 C3            CLR     C
+0209 EB            MOV     A,R3
+020A 9500    R     SUBB    A,Pause
+020C EA            MOV     A,R2
+020D 9400          SUBB    A,#00H
+020F 5007          JNC     ?C0103
+0211 0B            INC     R3
+0212 BB0001        CJNE    R3,#00H,?C0188
+0215 0A            INC     R2
+0216         ?C0188:
+0216 80F0          SJMP    ?C0104
+                                           ; SOURCE LINE # 418
+0218         ?C0103:
+0218 0500    R     INC     S_Index+01H
+021A E500    R     MOV     A,S_Index+01H
+021C 7002          JNZ     ?C0189
+021E 0500    R     INC     S_Index
+0220         ?C0189:
+0220 C3            CLR     C
+0221 E500    R     MOV     A,S_Index+01H
+0223 9414          SUBB    A,#014H
+0225 E500    R     MOV     A,S_Index
+0227 9400          SUBB    A,#00H
+0229 40C3          JC      ?C0101
+022B         ?C0102:
+                                           ; SOURCE LINE # 419
+022B C2A0          CLR     pin0
+                                           ; SOURCE LINE # 420
+022D 0500    R     INC     N
+022F E500    R     MOV     A,N
+0231 6405          XRL     A,#05H
+0233 6003          JZ      $ + 5H
+0235 020000  R     LJMP    ?C0056
+                                           ; SOURCE LINE # 421
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 24  
+
+0238         ?C0107:
+0238 22            RET     
+             ; FUNCTION PlayRandal (END)
+
+             ; FUNCTION Simul (BEGIN)
+                                           ; SOURCE LINE # 424
+                                           ; SOURCE LINE # 425
+                                           ; SOURCE LINE # 428
+0000 C2A7          CLR     pin7
+                                           ; SOURCE LINE # 429
+0002 D281          SETB    pinLight
+                                           ; SOURCE LINE # 430
+0004 120000  R     LCALL   PlayPushButton
+                                           ; SOURCE LINE # 431
+;---- Variable 'Delay' assigned to Register 'R2/R3' ----
+0007 E4            CLR     A
+0008 FB            MOV     R3,A
+0009 FA            MOV     R2,A
+000A         ?C0108:
+000A 0B            INC     R3
+000B BB0001        CJNE    R3,#00H,?C0190
+000E 0A            INC     R2
+000F         ?C0190:
+000F BA75F8        CJNE    R2,#075H,?C0108
+0012 BB30F5        CJNE    R3,#030H,?C0108
+0015         ?C0109:
+                                           ; SOURCE LINE # 432
+;---- Variable 'I' assigned to Register 'R1' ----
+0015 E4            CLR     A
+0016 F9            MOV     R1,A
+0017         ?C0111:
+0017 E9            MOV     A,R1
+0018 C3            CLR     C
+0019 9500    R     SUBB    A,Time
+001B 5015          JNC     ?C0112
+                                           ; SOURCE LINE # 433
+001D A2A6          MOV     C,pin6
+001F 72A7          ORL     C,pin7
+0021 5009          JNC     ?C0114
+0023 120000  R     LCALL   PlayPushButton
+0026 C2A7          CLR     pin7
+0028 C2A6          CLR     pin6
+002A 8006          SJMP    ?C0112
+002C         ?C0114:
+                                           ; SOURCE LINE # 434
+002C 120000  R     LCALL   PlayFile
+                                           ; SOURCE LINE # 435
+002F         ?C0113:
+002F 09            INC     R1
+0030 80E5          SJMP    ?C0111
+0032         ?C0112:
+                                           ; SOURCE LINE # 436
+0032 A2A7          MOV     C,pin7
+0034 B3            CPL     C
+0035 B0A6          ANL     C,/pin6
+0037 5011          JNC     ?C0116
+                                           ; SOURCE LINE # 437
+0039 E4            CLR     A
+003A FA            MOV     R2,A
+003B FB            MOV     R3,A
+003C         ?C0117:
+003C 0B            INC     R3
+003D BB0001        CJNE    R3,#00H,?C0191
+0040 0A            INC     R2
+0041         ?C0191:
+0041 BA75F8        CJNE    R2,#075H,?C0117
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 25  
+
+0044 BB30F5        CJNE    R3,#030H,?C0117
+0047         ?C0118:
+                                           ; SOURCE LINE # 438
+0047 120000  R     LCALL   PlayEnd
+                                           ; SOURCE LINE # 439
+004A         ?C0116:
+                                           ; SOURCE LINE # 440
+004A C281          CLR     pinLight
+                                           ; SOURCE LINE # 441
+004C 22            RET     
+             ; FUNCTION Simul (END)
+
+             ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 449
+                                           ; SOURCE LINE # 450
+0000 120000  R     LCALL   Init
+                                           ; SOURCE LINE # 451
+0003 120000  E     LCALL   MCOM_RESET_BUFFERS
+                                           ; SOURCE LINE # 452
+0006 7B05          MOV     R3,#05H
+0008 7A00    R     MOV     R2,#HIGH ?SC_3
+000A 7900    R     MOV     R1,#LOW ?SC_3
+000C 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 453
+000F 7B05          MOV     R3,#05H
+0011 7A00    R     MOV     R2,#HIGH ?SC_16
+0013 7900    R     MOV     R1,#LOW ?SC_16
+0015 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 454
+0018 7B05          MOV     R3,#05H
+001A 7A00    R     MOV     R2,#HIGH ?SC_25
+001C 7900    R     MOV     R1,#LOW ?SC_25
+001E 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 455
+0021 7B05          MOV     R3,#05H
+0023 7A00    R     MOV     R2,#HIGH ?SC_33
+0025 7900    R     MOV     R1,#LOW ?SC_33
+0027 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 456
+002A 7B05          MOV     R3,#05H
+002C 7A00    R     MOV     R2,#HIGH ?SC_43
+002E 7900    R     MOV     R1,#LOW ?SC_43
+0030 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 457
+0033 7B05          MOV     R3,#05H
+0035 7A00    R     MOV     R2,#HIGH ?SC_53
+0037 7900    R     MOV     R1,#LOW ?SC_53
+0039 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 458
+003C C200    R     CLR     bPlaying
+                                           ; SOURCE LINE # 459
+003E 750032  R     MOV     Pause,#032H
+                                           ; SOURCE LINE # 460
+0041 750032  R     MOV     Time,#032H
+                                           ; SOURCE LINE # 461
+0044 C200    R     CLR     bMoveDoors
+0046 C200    R     CLR     bMoveDoorsBack
+                                           ; SOURCE LINE # 462
+0048 C200    R     CLR     bStopPush
+004A C200    R     CLR     bStopPushBack
+                                           ; SOURCE LINE # 464
+004C E4            CLR     A
+004D F5A0          MOV     P2,A
+004F F580          MOV     P0,A
+                                           ; SOURCE LINE # 465
+0051 D282          SETB    pinPower
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 26  
+
+0053         ?C0121:
+                                           ; SOURCE LINE # 467
+                                           ; SOURCE LINE # 468
+0053 200003  E     JB      MCOM_RIBUF,$ + 6H
+0056 020000  R     LJMP    ?C0123
+                                           ; SOURCE LINE # 469
+0059 120000  E     LCALL   MCOM_READBYTE
+005C 8F00    R     MOV     RByte,R7
+                                           ; SOURCE LINE # 470
+005E EF            MOV     A,R7
+005F 120000  E     LCALL   ?C_CCASE
+0062 0000    R     DW      ?C0133
+0064 2B            DB      02BH
+0065 0000    R     DW      ?C0135
+0067 2D            DB      02DH
+0068 0000    R     DW      ?C0125
+006A 30            DB      030H
+006B 0000    R     DW      ?C0126
+006D 31            DB      031H
+006E 0000    R     DW      ?C0127
+0070 32            DB      032H
+0071 0000    R     DW      ?C0128
+0073 33            DB      033H
+0074 0000    R     DW      ?C0129
+0076 34            DB      034H
+0077 0000    R     DW      ?C0130
+0079 35            DB      035H
+007A 0000    R     DW      ?C0131
+007C 36            DB      036H
+007D 0000    R     DW      ?C0132
+007F 37            DB      037H
+0080 0000    R     DW      ?C0140
+0082 61            DB      061H
+0083 0000    R     DW      ?C0138
+0085 65            DB      065H
+0086 0000    R     DW      ?C0137
+0088 66            DB      066H
+0089 0000    R     DW      ?C0141
+008B 72            DB      072H
+008C 0000    R     DW      ?C0139
+008E 73            DB      073H
+008F 0000          DW      00H
+0091 0000    R     DW      ?C0123
+                                           ; SOURCE LINE # 471
+0093         ?C0125:
+0093 B2A0          CPL     pin0
+0095 120000  R     LCALL   ShowStatusP0
+0098 020000  R     LJMP    ?C0123
+                                           ; SOURCE LINE # 472
+009B         ?C0126:
+009B B2A1          CPL     pin1
+009D 120000  R     LCALL   ShowStatusP0
+00A0 020000  R     LJMP    ?C0123
+                                           ; SOURCE LINE # 473
+00A3         ?C0127:
+00A3 B2A2          CPL     pin2
+00A5 120000  R     LCALL   ShowStatusP0
+00A8 020000  R     LJMP    ?C0123
+                                           ; SOURCE LINE # 474
+00AB         ?C0128:
+00AB B2A3          CPL     pin3
+00AD 120000  R     LCALL   ShowStatusP0
+00B0 020000  R     LJMP    ?C0123
+                                           ; SOURCE LINE # 475
+00B3         ?C0129:
+00B3 B2A4          CPL     pin4
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 27  
+
+00B5 120000  R     LCALL   ShowStatusP0
+00B8 020000  R     LJMP    ?C0123
+                                           ; SOURCE LINE # 476
+00BB         ?C0130:
+00BB B2A5          CPL     pin5
+00BD 120000  R     LCALL   ShowStatusP0
+00C0 8076          SJMP    ?C0123
+                                           ; SOURCE LINE # 477
+00C2         ?C0131:
+00C2 B2A6          CPL     pin6
+00C4 120000  R     LCALL   ShowStatusP0
+00C7 806F          SJMP    ?C0123
+                                           ; SOURCE LINE # 478
+00C9         ?C0132:
+00C9 B2A7          CPL     pin7
+00CB 120000  R     LCALL   ShowStatusP0
+00CE 8068          SJMP    ?C0123
+                                           ; SOURCE LINE # 479
+00D0         ?C0133:
+00D0 C3            CLR     C
+00D1 E500    R     MOV     A,Pause
+00D3 94FE          SUBB    A,#0FEH
+00D5 E4            CLR     A
+00D6 94FF          SUBB    A,#0FFH
+00D8 5004          JNC     ?C0134
+00DA 0500    R     INC     Pause
+00DC 0500    R     INC     Pause
+00DE         ?C0134:
+00DE AF00    R     MOV     R7,Pause
+00E0 120000  E     LCALL   _MCOM_SEND_BYTE
+00E3 8053          SJMP    ?C0123
+                                           ; SOURCE LINE # 480
+00E5         ?C0135:
+00E5 E500    R     MOV     A,Pause
+00E7 6004          JZ      ?C0136
+00E9 1500    R     DEC     Pause
+00EB 1500    R     DEC     Pause
+00ED         ?C0136:
+00ED AF00    R     MOV     R7,Pause
+00EF 120000  E     LCALL   _MCOM_SEND_BYTE
+00F2 8044          SJMP    ?C0123
+                                           ; SOURCE LINE # 481
+00F4         ?C0137:
+00F4 120000  R     LCALL   PlayFile
+00F7 7B05          MOV     R3,#05H
+00F9 7A00    R     MOV     R2,#HIGH ?SC_64
+00FB 7900    R     MOV     R1,#LOW ?SC_64
+00FD 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 482
+0100 8036          SJMP    ?C0123
+                                           ; SOURCE LINE # 483
+0102         ?C0138:
+0102 120000  R     LCALL   PlayEnd
+0105 7B05          MOV     R3,#05H
+0107 7A00    R     MOV     R2,#HIGH ?SC_87
+0109 7900    R     MOV     R1,#LOW ?SC_87
+010B 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 484
+010E 8028          SJMP    ?C0123
+                                           ; SOURCE LINE # 485
+0110         ?C0139:
+0110 120000  R     LCALL   PlayPushButton
+0113 7B05          MOV     R3,#05H
+0115 7A00    R     MOV     R2,#HIGH ?SC_108
+0117 7900    R     MOV     R1,#LOW ?SC_108
+0119 120000  E     LCALL   _MCOM_SEND_STRING
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 28  
+
+                                           ; SOURCE LINE # 486
+011C 801A          SJMP    ?C0123
+                                           ; SOURCE LINE # 487
+011E         ?C0140:
+011E 120000  R     LCALL   Simul
+0121 7B05          MOV     R3,#05H
+0123 7A00    R     MOV     R2,#HIGH ?SC_132
+0125 7900    R     MOV     R1,#LOW ?SC_132
+0127 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 488
+012A 800C          SJMP    ?C0123
+                                           ; SOURCE LINE # 489
+012C         ?C0141:
+012C 120000  R     LCALL   PlayRandal
+012F 7B05          MOV     R3,#05H
+0131 7A00    R     MOV     R2,#HIGH ?SC_150
+0133 7900    R     MOV     R1,#LOW ?SC_150
+0135 120000  E     LCALL   _MCOM_SEND_STRING
+                                           ; SOURCE LINE # 490
+                                           ; SOURCE LINE # 491
+                                           ; SOURCE LINE # 492
+0138         ?C0123:
+                                           ; SOURCE LINE # 494
+0138 30A706        JNB     pin7,?C0142
+013B D200    R     SETB    bStopPush
+013D C2A7          CLR     pin7
+013F 8002          SJMP    ?C0143
+0141         ?C0142:
+0141 C200    R     CLR     bStopPush
+0143         ?C0143:
+                                           ; SOURCE LINE # 496
+0143 A200    R     MOV     C,bStopPushBack
+0145 300001  R     JNB     bStopPush,?C0192
+0148 B3            CPL     C
+0149         ?C0192:
+0149 5007          JNC     ?C0144
+014B A200    R     MOV     C,bStopPush
+014D 9200    R     MOV     bStopPushBack,C
+014F 120000  R     LCALL   PlayPushButton
+0152         ?C0144:
+                                           ; SOURCE LINE # 497
+0152 A200    R     MOV     C,bMoveDoorsBack
+0154 300001  R     JNB     bMoveDoors,?C0193
+0157 B3            CPL     C
+0158         ?C0193:
+0158 500B          JNC     ?C0145
+015A A200    R     MOV     C,bMoveDoors
+015C 9200    R     MOV     bMoveDoorsBack,C
+015E A200    R     MOV     C,bMoveDoors
+0160 9200    R     MOV     ?PlayOpenDoors?BIT,C
+0162 120000  R     LCALL   PlayOpenDoors
+0165         ?C0145:
+                                           ; SOURCE LINE # 499
+0165 30A106        JNB     pin1,?C0146
+0168 75000F  R     MOV     Time,#0FH
+016B 120000  R     LCALL   Simul
+016E         ?C0146:
+                                           ; SOURCE LINE # 500
+016E 30A206        JNB     pin2,?C0147
+0171 750016  R     MOV     Time,#016H
+0174 120000  R     LCALL   Simul
+0177         ?C0147:
+                                           ; SOURCE LINE # 501
+0177 30A306        JNB     pin3,?C0148
+017A 75001E  R     MOV     Time,#01EH
+017D 120000  R     LCALL   Simul
+C51 COMPILER V4.01,  SPEAKER                                                               24/12/04  12:20:42  PAGE 29  
+
+0180         ?C0148:
+                                           ; SOURCE LINE # 502
+0180 30A406        JNB     pin4,?C0149
+0183 750025  R     MOV     Time,#025H
+0186 120000  R     LCALL   Simul
+0189         ?C0149:
+                                           ; SOURCE LINE # 503
+0189 30A506        JNB     pin5,?C0150
+018C 75002D  R     MOV     Time,#02DH
+018F 120000  R     LCALL   Simul
+0192         ?C0150:
+                                           ; SOURCE LINE # 505
+0192 30A606        JNB     pin6,?C0151
+0195 D200    R     SETB    bMoveDoors
+0197 D281          SETB    pinLight
+0199 8004          SJMP    ?C0152
+019B         ?C0151:
+019B C200    R     CLR     bMoveDoors
+019D C281          CLR     pinLight
+019F         ?C0152:
+                                           ; SOURCE LINE # 506
+019F 120000  E     LCALL   MCOM_PROC
+                                           ; SOURCE LINE # 507
+01A2 B296          CPL     WDI
+                                           ; SOURCE LINE # 508
+01A4 020000  R     LJMP    ?C0121
+                                           ; SOURCE LINE # 509
+01A7 22            RET     
+             ; FUNCTION main (END)
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1570    ----
+   CONSTANT SIZE    =   3369    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      5       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
